@@ -1,75 +1,1123 @@
-<<set $paisesMundo = [
-  "España", "Francia", "Alemania", "Inglaterra", "Italia", "Portugal", "Países Bajos", "Croacia",
-  "Bélgica", "Noruega", "Polonia", "Turquía", "Grecia", "Islandia",
-  "Argentina", "Brasil", "Uruguay", "Colombia", "Chile", "Ecuador", "Paraguay", "Perú",
-  "Venezuela", "Bolivia",
-  "México", "Estados Unidos", "Canadá", "Costa Rica", "Jamaica", "Honduras", "Panamá",
-  "Marruecos", "Senegal", "Nigeria", "Costa de Marfil", "Egipto", "Camerún", "Ghana",
-  "Argelia", "Mali",
-  "Japón", "Corea del Sur", "Australia", "Arabia Saudí", "Irán", "Catar", "Nueva Zelanda"
-]>>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>11 Fichas: Carrera de Fútbol</title>
+  <style>
+    :root {
+      --bg-main: #0b1120;
+      --bg-card: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --gold: #facc15;
+    }
 
-<<set $listaPosiciones = [
-  "Delantero Centro", "Extremo Izquierdo", "Extremo Derecho",
-  "Mediapunta", "Centrocampista", "Pivote Defensivo",
-  "Lateral Izquierdo", "Lateral Derecho", "Defensa Central", "Portero"
-]>>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-<<set $listaPies = ["Diestro", "Zurdo", "Ambidiestro"]>>
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 16px;
+    }
 
-<<set $listaCanteras = [
-  "Real Madrid (La Fábrica)", "FC Barcelona (La Masia)", "Atlético de Madrid", 
-  "Athletic Club (Lezama)", "Real Sociedad (Zubieta)", "Valencia CF (Paterna)",
-  "Manchester City", "Chelsea FC (Cobham)", "Arsenal FC (Hale End)", "Manchester United",
-  "Bayern Múnich", "Borussia Dortmund", "Bayer Leverkusen",
-  "Paris Saint-Germain", "Olympique de Lyon", "AS Mónaco", "Stade Rennais",
-  "Ajax de Ámsterdam", "PSV Eindhoven", "Feyenoord",
-  "SL Benfica (Seixal)", "Sporting de Portugal (Alcochete)", "FC Porto",
-  "Juventus", "AC Milan", "Inter de Milán", "Atalanta",
-  "River Plate", "Boca Juniors", "Vélez Sarsfield", "Argentinos Juniors",
-  "Santos FC", "Flamengo", "São Paulo FC", "Palmeiras"
-]>>
+    #game-container {
+      width: 100%;
+      max-width: 760px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
 
-/* Clubes habituales de Champions League */
-<<set $clubesEuropaTop = [
-  "Real Madrid", "FC Barcelona", "Manchester City", "Liverpool FC", 
-  "Arsenal FC", "Bayern Múnich", "Paris Saint-Germain", "Inter de Milán", 
-  "Juventus", "Atlético de Madrid", "Borussia Dortmund"
-]>>
+    h1, h2, h3 { color: #ffffff; margin-bottom: 14px; font-weight: 800; }
+    h1 { font-size: 1.8rem; text-align: center; }
+    h2 { font-size: 1.35rem; }
+    h3 { font-size: 1.15rem; color: var(--accent); }
 
-/* Clubes que compiten habitualmente en UEFA Europa League */
-<<set $clubesEuropaMedios = [
-  "Bayer Leverkusen", "Chelsea FC", "Atalanta", "Manchester United", 
-  "Tottenham Hotspur", "Aston Villa", "Newcastle United", "AC Milan", 
-  "AS Roma", "SSC Napoli", "Sevilla FC", "Real Sociedad", "Athletic Club", 
-  "SL Benfica", "Sporting de Portugal", "FC Porto", "Ajax de Ámsterdam", "Olympique de Marsella"
-]>>
+    p { line-height: 1.6; margin-bottom: 12px; color: var(--text-main); }
+    hr { border: 0; border-top: 1px solid var(--border-color); margin: 20px 0; }
 
-<<set $clubesEuropaBajos = [
-  "Valencia CF", "Real Betis", "Villarreal CF", "Girona FC", "Celta de Vigo",
-  "West Ham United", "Brighton", "Everton FC", "Wolverhampton",
-  "Eintracht Frankfurt", "VfB Stuttgart", "RB Leipzig", "Fiorentina", 
-  "Lazio", "LOSC Lille", "AS Mónaco", "Feyenoord", "PSV Eindhoven"
-]>>
+    .tarjeta-ficha {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
 
-<<set $clubesExoticos = ["Al-Hilal", "Al-Nassr", "Inter Miami", "LA Galaxy", "Vissel Kobe"]>>
+    .ficha-juvenil {
+      background: linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%);
+      border: 1px solid #38bdf8;
+    }
 
-/* Variables de Palmarés y Estadísticas */
-<<set $titulosClub = 0>>
-<<set $titulosSeleccion = 0>>
-<<set $listaTitulos = []>>
-<<set $partidosTotales = 0>>
-<<set $golesTotales = 0>>
-<<set $partidosSeleccion = 0>>
-<<set $golesSeleccion = 0>>
-<<set $porteriasCeroTotales = 0>>
+    .ficha-prime {
+      background: linear-gradient(135deg, #14532d 0%, #16a34a 100%);
+      border: 1px solid #4ade80;
+    }
 
-/* Premios individuales */
-<<set $balonesDeOro = 0>>
-<<set $botasDeOro = 0>>
-<<set $guantesDeOro = 0>>
-<<set $vecesOnceIdeal = 0>>
-<<set $pichichisLiga = 0>>
-<<set $pichichisChampions = 0>>
-<<set $pichichisMundial = 0>>
-<<set $listaPremiosIndiv = []>>
+    .ficha-veterano {
+      background: linear-gradient(135deg, #78350f 0%, #d97706 100%);
+      border: 1px solid #fbbf24;
+    }
+
+    .badge-etapa {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .progreso-carrera {
+      display: flex;
+      gap: 4px;
+      margin-top: 10px;
+    }
+
+    .progreso-bloque {
+      flex: 1;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .progreso-bloque.activo {
+      background: #ffffff;
+    }
+
+    .cartel {
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 15px 0;
+      border-left: 6px solid;
+    }
+
+    .cartel-titular {
+      font-weight: 800;
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+
+    .cartel-cuerpo {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .cartel-stats {
+      font-size: 0.9rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
+    .cartel-oro {
+      background: rgba(234, 179, 8, 0.15);
+      border-color: #eab308;
+      color: #fef08a;
+    }
+
+    .cartel-verde {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: #22c55e;
+      color: #bbf7d0;
+    }
+
+    .cartel-azul {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: #3b82f6;
+      color: #bfdbfe;
+    }
+
+    .cartel-amarillo {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: #f59e0b;
+      color: #fde68a;
+    }
+
+    .cartel-rojo {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #ef4444;
+      color: #fecaca;
+    }
+
+    .lista-opciones {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    button.btn-opcion {
+      background-color: #1e3a8a;
+      color: #ffffff;
+      border: 1px solid #3b82f6;
+      border-radius: 8px;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    button.btn-opcion:hover {
+      background-color: #2563eb;
+      transform: translateY(-1px);
+    }
+
+    button.btn-primario {
+      background-color: #0284c7;
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      cursor: pointer;
+      display: inline-block;
+      margin-top: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    button.btn-primario:hover {
+      background-color: #0369a1;
+    }
+
+    input[type="text"] {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 1rem;
+      width: 100%;
+      margin: 6px 0 16px 0;
+    }
+
+    .vitrina-box {
+      background: rgba(234, 179, 8, 0.15);
+      border: 1px solid #eab308;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 12px 0;
+    }
+
+    .seleccion-box {
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid #3b82f6;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 12px 0;
+    }
+
+    .resurreccion-box {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      border: 2px solid #818cf8;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 15px 0;
+    }
+
+    .premios-box {
+      background: linear-gradient(135deg, #451a03 0%, #78350f 100%);
+      border: 2px solid #f59e0b;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container"></div>
+
+  <script>
+    const paisesMundo = [
+      "España", "Francia", "Alemania", "Inglaterra", "Italia", "Portugal", "Países Bajos", "Croacia",
+      "Bélgica", "Noruega", "Polonia", "Turquía", "Grecia", "Islandia",
+      "Argentina", "Brasil", "Uruguay", "Colombia", "Chile", "Ecuador", "Paraguay", "Perú",
+      "Venezuela", "Bolivia", "México", "Estados Unidos", "Canadá", "Costa Rica",
+      "Marruecos", "Senegal", "Nigeria", "Costa de Marfil", "Egipto", "Camerún", "Ghana",
+      "Japón", "Corea del Sur", "Australia", "Arabia Saudí"
+    ];
+
+    const listaPosiciones = [
+      "Delantero Centro", "Extremo Izquierdo", "Extremo Derecho",
+      "Mediapunta", "Centrocampista", "Pivote Defensivo",
+      "Lateral Izquierdo", "Lateral Derecho", "Defensa Central", "Portero"
+    ];
+
+    const listaCanteras = [
+      "Real Madrid (La Fábrica)", "FC Barcelona (La Masia)", "Atlético de Madrid", 
+      "Athletic Club (Lezama)", "Real Sociedad (Zubieta)", "Valencia CF (Paterna)",
+      "Manchester City", "Chelsea FC (Cobham)", "Arsenal FC (Hale End)", "Manchester United",
+      "Bayern Múnich", "Borussia Dortmund", "Bayer Leverkusen",
+      "Paris Saint-Germain", "Olympique de Lyon", "AS Mónaco",
+      "Ajax de Ámsterdam", "PSV Eindhoven", "Feyenoord",
+      "SL Benfica (Seixal)", "Sporting de Portugal (Alcochete)", "FC Porto",
+      "Juventus", "AC Milan", "Inter de Milán", "Atalanta",
+      "River Plate", "Boca Juniors", "Santos FC", "Flamengo"
+    ];
+
+    const clubesEuropaTop = [
+      "Real Madrid", "FC Barcelona", "Manchester City", "Liverpool FC", 
+      "Arsenal FC", "Bayern Múnich", "Paris Saint-Germain", "Inter de Milán", 
+      "Juventus", "Atlético de Madrid", "Borussia Dortmund"
+    ];
+
+    const clubesEuropaMedios = [
+      "Bayer Leverkusen", "Chelsea FC", "Atalanta", "Manchester United", 
+      "Tottenham Hotspur", "Aston Villa", "Newcastle United", "AC Milan", 
+      "AS Roma", "SSC Napoli", "Sevilla FC", "Real Sociedad", "Athletic Club", 
+      "SL Benfica", "Sporting de Portugal", "FC Porto", "Ajax de Ámsterdam"
+    ];
+
+    const clubesEuropaBajos = [
+      "Valencia CF", "Real Betis", "Villarreal CF", "Girona FC", "Celta de Vigo",
+      "West Ham United", "Brighton", "Everton FC", "Wolverhampton",
+      "Eintracht Frankfurt", "VfB Stuttgart", "RB Leipzig", "Fiorentina", 
+      "Lazio", "LOSC Lille", "AS Mónaco", "Feyenoord"
+    ];
+
+    const clubesExoticos = ["Al-Hilal", "Al-Nassr", "Inter Miami", "LA Galaxy", "Vissel Kobe"];
+
+    let player = {
+      nombre: "Álex Navarro",
+      dorsal: 10,
+      nacionalidad: "",
+      posicion: "",
+      pieHabil: "",
+      club: "",
+      edad: 17,
+      numeroFicha: 1,
+      media: 70,
+      titulosClub: 0,
+      titulosSeleccion: 0,
+      listaTitulos: [],
+      partidosTotales: 0,
+      golesTotales: 0,
+      partidosSeleccion: 0,
+      golesSeleccion: 0,
+      porteriasCeroTotales: 0,
+      balonesDeOro: 0,
+      botasDeOro: 0,
+      guantesDeOro: 0,
+      vecesOnceIdeal: 0,
+      pichichisLiga: 0,
+      pichichisChampions: 0,
+      pichichisMundial: 0,
+      listaPremiosIndiv: []
+    };
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function pickRandom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function pickDistinct(arr, count) {
+      const copy = [...arr];
+      const res = [];
+      for (let i = 0; i < count; i++) {
+        if (!copy.length) break;
+        const idx = Math.floor(Math.random() * copy.length);
+        res.push(copy.splice(idx, 1)[0]);
+      }
+      return res;
+    }
+
+    const container = document.getElementById("game-container");
+
+    function renderStart() {
+      container.innerHTML = `
+        <h1>⚽ 11 FICHAS: CARRERA DE FÚTBOL</h1>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px;">De Promesa Juvenil a Leyenda del Deporte Rey</p>
+        <p>Vive una trayectoria profesional completa de 20 años a lo largo de <strong>11 etapas bianuales</strong> (desde los 17 hasta los 37 años).</p>
+        <p>Define tus orígenes, posición, pie hábil y toma decisiones clave dentro y fuera del campo para forjar tu palmarés histórico.</p>
+        <hr>
+        <button class="btn-primario" onclick="renderNacionalidad()">Comenzar tu carrera profesional</button>
+      `;
+    }
+
+    function renderNacionalidad() {
+      const opciones = pickDistinct(paisesMundo, 3);
+      container.innerHTML = `
+        <h3>🌍 Paso 1: País de Nacimiento</h3>
+        <p>¿Bajo qué bandera darás tus primeros toques al balón?</p>
+        <div class="lista-opciones">
+          ${opciones.map(p => `<button class="btn-opcion" onclick="elegirNacionalidad('${p}')">Nacer en <strong>${p}</strong></button>`).join('')}
+        </div>
+      `;
+    }
+
+    function elegirNacionalidad(p) {
+      player.nacionalidad = p;
+      renderPosicion();
+    }
+
+    function renderPosicion() {
+      const opciones = pickDistinct(listaPosiciones, 3);
+      container.innerHTML = `
+        <h3>🏃 Paso 2: Posición en el Campo</h3>
+        <p><strong>Nacionalidad:</strong> ${player.nacionalidad}</p>
+        <p>¿Cuál es tu rol natural sobre el terreno de juego?</p>
+        <div class="lista-opciones">
+          ${opciones.map(pos => `<button class="btn-opcion" onclick="elegirPosicion('${pos}')">Jugar de <strong>${pos}</strong></button>`).join('')}
+        </div>
+      `;
+    }
+
+    function elegirPosicion(pos) {
+      player.posicion = pos;
+      renderPie();
+    }
+
+    function renderPie() {
+      container.innerHTML = `
+        <h3>👟 Paso 3: Perfil y Pierna Hábil</h3>
+        <p><strong>Nacionalidad:</strong> ${player.nacionalidad} | <strong>Posición:</strong> ${player.posicion}</p>
+        <div class="lista-opciones">
+          <button class="btn-opcion" onclick="elegirPie('Diestro')">Pierna derecha (Diestro)</button>
+          <button class="btn-opcion" onclick="elegirPie('Zurdo')">Pierna izquierda (Zurdo)</button>
+          <button class="btn-opcion" onclick="elegirPie('Ambidiestro')">Dominio de ambas piernas (Ambidiestro)</button>
+        </div>
+      `;
+    }
+
+    function elegirPie(pie) {
+      player.pieHabil = pie;
+      renderDatos();
+    }
+
+    function renderDatos() {
+      const defDorsal = randomInt(1, 99);
+      container.innerHTML = `
+        <h3>✍️ Paso 4: Identidad y Dorsal</h3>
+        <p><strong>Nacionalidad:</strong> ${player.nacionalidad} | <strong>Posición:</strong> ${player.posicion} | <strong>Pierna:</strong> ${player.pieHabil}</p>
+        <label>Nombre de futbolista:</label>
+        <input type="text" id="inputNombre" value="Álex Navarro">
+        <label>Dorsal predilecto:</label>
+        <input type="text" id="inputDorsal" value="${defDorsal}">
+        <button class="btn-primario" onclick="guardarDatos()">Firmar ficha y buscar academia</button>
+      `;
+    }
+
+    function guardarDatos() {
+      const n = document.getElementById("inputNombre").value.trim();
+      const d = parseInt(document.getElementById("inputDorsal").value.trim(), 10);
+      if (n) player.nombre = n;
+      if (!isNaN(d)) player.dorsal = d;
+      renderCantera();
+    }
+
+    function renderCantera() {
+      const opciones = pickDistinct(listaCanteras, 3);
+      container.innerHTML = `
+        <h3>🏟️ Paso 5: Academia de Formación</h3>
+        <p><strong>Futbolista:</strong> ${player.nombre} (#${player.dorsal}) | ${player.posicion}</p>
+        <p>Tres academias de prestigio internacional envían a sus ojeadores a ficharte a los 17 años:</p>
+        <div class="lista-opciones">
+          ${opciones.map(c => `<button class="btn-opcion" onclick="elegirCantera('${c}')">Formarte en la cantera de <strong>${c}</strong></button>`).join('')}
+        </div>
+      `;
+    }
+
+    function elegirCantera(c) {
+      player.club = c;
+      player.edad = 17;
+      player.numeroFicha = 1;
+      player.media = randomInt(64, 73);
+      renderFichaInicial();
+    }
+
+    function renderFichaInicial() {
+      container.innerHTML = `
+        <h3>📋 Ficha Inicial Oficial: Inicio de Carrera</h3>
+        <div style="background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; padding: 18px; margin: 15px 0; line-height: 1.8;">
+          <p><strong>Nombre:</strong> ${player.nombre} (#${player.dorsal})</p>
+          <p><strong>Nacionalidad:</strong> ${player.nacionalidad} | <strong>Posición:</strong> ${player.posicion}</p>
+          <p><strong>Pierna hábil:</strong> ${player.pieHabil}</p>
+          <p><strong>Club inicial:</strong> ${player.club}</p>
+          <p><strong>Edad inicial:</strong> 17 años</p>
+          <p><strong>Media inicial de salida:</strong> ${player.media} / 99</p>
+        </div>
+        <p>El cuerpo técnico te incluye en la convocatoria del primer equipo para tu debut oficial.</p>
+        <button class="btn-primario" onclick="simularFicha()">Debut profesional: Saltar al césped (Ficha 1)</button>
+      `;
+    }
+
+    function simularFicha() {
+      let claseFicha = "ficha-juvenil";
+      let nombreEtapa = "JUVENIL // PROMESA";
+      if (player.numeroFicha > 7) {
+        claseFicha = "ficha-veterano";
+        nombreEtapa = "VETERANO // LEYENDA";
+      } else if (player.numeroFicha > 3) {
+        claseFicha = "ficha-prime";
+        nombreEtapa = "PRIME // ÉLITE MUNDIAL";
+      }
+
+      const suerte = randomInt(1, 100);
+      let nuevosTitulos = [];
+      let porteriasCero = 0;
+      const esAtacante = (player.posicion.includes("Delantero") || player.posicion.includes("Extremo") || player.posicion.includes("Mediapunta"));
+      const esClubChampions = clubesEuropaTop.includes(player.club);
+      const esClubEuropaLeague = clubesEuropaMedios.includes(player.club);
+
+      let subida = 0;
+      let partidos = 0;
+      let goles = 0;
+      let htmlRendimiento = "";
+
+      if (suerte >= 80) {
+        subida = (player.numeroFicha <= 3) ? randomInt(5, 8) : ((player.numeroFicha <= 7) ? randomInt(3, 5) : randomInt(0, 1));
+        player.media = Math.min(99, Math.max(40, player.media + subida));
+        partidos = randomInt(65, 80);
+
+        if (player.posicion === "Portero") {
+          goles = 0;
+          porteriasCero = randomInt(28, 42);
+          player.porteriasCeroTotales += porteriasCero;
+        } else if (player.posicion.includes("Defensa") || player.posicion.includes("Lateral")) {
+          goles = randomInt(1, 4);
+          porteriasCero = randomInt(24, 38);
+          player.porteriasCeroTotales += porteriasCero;
+        } else if (player.posicion.includes("Pivote")) {
+          goles = randomInt(3, 8);
+        } else if (player.posicion.includes("Centro")) {
+          goles = randomInt(10, 18);
+        } else if (player.posicion.includes("Mediapunta")) {
+          goles = randomInt(16, 26);
+        } else {
+          goles = randomInt(38, 56);
+        }
+
+        htmlRendimiento = `
+          <div class="cartel cartel-oro">
+            <div class="cartel-titular">🌟 RENDIMIENTO DE CLASE MUNDIAL</div>
+            <div class="cartel-cuerpo">Has dominado las competiciones con autoridad. El cuerpo técnico y la afición se rinden a tu nivel en cada partido decisivo.</div>
+            <div class="cartel-stats">
+              📊 Bloque de 2 años: ${partidos} partidos | ${goles} goles ${porteriasCero > 0 ? `| 🧤 ${porteriasCero} porterías a cero` : ''}<br>
+              📈 Progresión en cancha: <strong>+${subida} de media</strong> (Nueva media: ${player.media})
+            </div>
+          </div>
+        `;
+
+        if (randomInt(1, 100) <= 75) nuevosTitulos.push("Liga Nacional");
+        if (randomInt(1, 100) <= 65) nuevosTitulos.push("Copa Doméstica");
+        if (esClubChampions && player.media >= 80 && randomInt(1, 100) <= 50) nuevosTitulos.push("UEFA Champions League");
+        else if (esClubEuropaLeague && player.media >= 75 && randomInt(1, 100) <= 65) nuevosTitulos.push("UEFA Europa League");
+
+      } else if (suerte >= 50) {
+        subida = (player.numeroFicha <= 3) ? randomInt(3, 5) : ((player.numeroFicha <= 7) ? randomInt(1, 3) : 0);
+        player.media = Math.min(99, Math.max(40, player.media + subida));
+        partidos = randomInt(55, 68);
+
+        if (player.posicion === "Portero") {
+          goles = 0;
+          porteriasCero = randomInt(20, 30);
+          player.porteriasCeroTotales += porteriasCero;
+        } else if (player.posicion.includes("Defensa") || player.posicion.includes("Lateral")) {
+          goles = randomInt(1, 3);
+          porteriasCero = randomInt(16, 26);
+          player.porteriasCeroTotales += porteriasCero;
+        } else if (player.posicion.includes("Pivote")) {
+          goles = randomInt(2, 5);
+        } else if (player.posicion.includes("Centro")) {
+          goles = randomInt(7, 12);
+        } else if (player.posicion.includes("Mediapunta")) {
+          goles = randomInt(12, 19);
+        } else {
+          goles = randomInt(22, 35);
+        }
+
+        htmlRendimiento = `
+          <div class="cartel cartel-verde">
+            <div class="cartel-titular">📈 CONSOLIDACIÓN Y NOTABLE ALTO</div>
+            <div class="cartel-cuerpo">Gran regularidad y disciplina táctica. Eres un fijo en las alineaciones titulares aportando solvencia continua.</div>
+            <div class="cartel-stats">
+              📊 Bloque de 2 años: ${partidos} partidos | ${goles} goles ${porteriasCero > 0 ? `| 🧤 ${porteriasCero} porterías a cero` : ''}<br>
+              📈 Progresión en cancha: <strong>+${subida} de media</strong> (Nueva media: ${player.media})
+            </div>
+          </div>
+        `;
+
+        if (randomInt(1, 100) <= 55) nuevosTitulos.push("Copa Doméstica");
+        if (randomInt(1, 100) <= 45 && player.media >= 78) nuevosTitulos.push("Liga Nacional");
+        if (esClubEuropaLeague && player.media >= 77 && randomInt(1, 100) <= 50) nuevosTitulos.push("UEFA Europa League");
+        else if (esClubChampions && player.media >= 83 && randomInt(1, 100) <= 35) nuevosTitulos.push("UEFA Champions League");
+
+      } else if (suerte >= 25) {
+        subida = (player.numeroFicha <= 3) ? randomInt(1, 3) : ((player.numeroFicha <= 7) ? 0 : -1);
+        player.media = Math.min(99, Math.max(40, player.media + subida));
+        partidos = randomInt(40, 54);
+
+        if (player.posicion === "Portero") {
+          goles = 0;
+          porteriasCero = randomInt(14, 22);
+          player.porteriasCeroTotales += porteriasCero;
+        } else if (player.posicion.includes("Defensa") || player.posicion.includes("Lateral")) {
+          goles = randomInt(0, 2);
+          porteriasCero = randomInt(12, 20);
+          player.porteriasCeroTotales += porteriasCero;
+        } else if (player.posicion.includes("Pivote")) {
+          goles = randomInt(1, 3);
+        } else if (player.posicion.includes("Centro")) {
+          goles = randomInt(4, 7);
+        } else if (player.posicion.includes("Mediapunta")) {
+          goles = randomInt(7, 12);
+        } else {
+          goles = randomInt(12, 22);
+        }
+
+        htmlRendimiento = `
+          <div class="cartel cartel-azul">
+            <div class="cartel-titular">📋 TRAYECTORIA CORRECTA Y TRABAJADA</div>
+            <div class="cartel-cuerpo">Cumpliste con el papel asignado alternando titularidades con rotaciones para dar descanso al plantel.</div>
+            <div class="cartel-stats">
+              📊 Bloque de 2 años: ${partidos} partidos | ${goles} goles ${porteriasCero > 0 ? `| 🧤 ${porteriasCero} porterías a cero` : ''}<br>
+              📈 Progresión en cancha: <strong>${subida >= 0 ? '+' : ''}${subida} de media</strong> (Nueva media: ${player.media})
+            </div>
+          </div>
+        `;
+
+        if (randomInt(1, 100) <= 45) nuevosTitulos.push("Copa Doméstica");
+
+      } else {
+        subida = (player.numeroFicha <= 3) ? -1 : ((player.numeroFicha <= 7) ? -2 : -3);
+        player.media = Math.min(99, Math.max(40, player.media + subida));
+        partidos = randomInt(12, 28);
+
+        if (player.posicion === "Portero" || player.posicion.includes("Defensa") || player.posicion.includes("Pivote")) {
+          goles = 0;
+          porteriasCero = randomInt(2, 6);
+          if (player.posicion === "Portero" || player.posicion.includes("Defensa")) {
+            player.porteriasCeroTotales += porteriasCero;
+          }
+        } else if (player.posicion.includes("Centro") || player.posicion.includes("Mediapunta")) {
+          goles = randomInt(1, 3);
+        } else {
+          goles = randomInt(2, 6);
+        }
+
+        htmlRendimiento = `
+          <div class="cartel cartel-rojo">
+            <div class="cartel-titular">💥 MOMENTO CRÍTICO Y BANQUILLO</div>
+            <div class="cartel-cuerpo">El ostracismo, las lesiones o la pérdida de confianza te apartaron de las grandes noches. La prensa duda de tu futuro.</div>
+            <div class="cartel-stats">
+              📊 Bloque de 2 años: ${partidos} partidos | ${goles} goles<br>
+              📉 Descenso en cancha: <strong>${subida} de media</strong> (Media actual: ${player.media})
+            </div>
+          </div>
+        `;
+
+        if ((esClubChampions || esClubEuropaLeague) && randomInt(1, 100) <= 40) {
+          nuevosTitulos.push(pickRandom(["Copa Doméstica", "Supercopa Nacional"]));
+        }
+      }
+
+      player.golesTotales += goles;
+      player.partidosTotales += partidos;
+
+      // Supercopas y Mundial de Clubes
+      if (nuevosTitulos.includes("Liga Nacional") || nuevosTitulos.includes("Copa Doméstica")) {
+        if (randomInt(1, 100) <= 65) nuevosTitulos.push("Supercopa Nacional");
+      }
+      if (nuevosTitulos.includes("UEFA Champions League") || nuevosTitulos.includes("UEFA Europa League")) {
+        if (randomInt(1, 100) <= 70) nuevosTitulos.push("Supercopa de la UEFA");
+      }
+      if (nuevosTitulos.includes("UEFA Champions League")) {
+        if (randomInt(1, 100) <= 75) nuevosTitulos.push("Mundial de Clubes de la FIFA");
+      }
+
+      // Eventos dinámicos de partido
+      let htmlMomento = "";
+      const azarMomento = randomInt(1, 100);
+      if (esAtacante && goles >= 15 && azarMomento <= 30) {
+        htmlMomento = `
+          <div style="background: rgba(245, 158, 11, 0.15); border-left: 4px solid #f59e0b; padding: 10px 14px; margin: 12px 0; border-radius: 6px;">
+            🔥 <strong>¡NOCHE HISTÓRICA EN EL DERBI!</strong> Marcaste un triplete épico contra tu eterno rival levantando a 80.000 aficionados al grito de tu nombre.
+          </div>
+        `;
+      } else if (!esAtacante && porteriasCero >= 15 && azarMomento <= 30) {
+        htmlMomento = `
+          <div style="background: rgba(56, 189, 248, 0.15); border-left: 4px solid #38bdf8; padding: 10px 14px; margin: 12px 0; border-radius: 6px;">
+            🧱 <strong>¡MURO INQUEBRANTABLE!</strong> Salvaste un gol cantado bajo palos en el minuto 93 de un partido decisivo. Toda la plantilla corrió a abrazarte.
+          </div>
+        `;
+      }
+
+      // Títulos de club
+      let htmlTitulos = "";
+      if (nuevosTitulos.length > 0) {
+        htmlTitulos = `
+          <div class="vitrina-box">
+            ¡Has levantado trofeos con <strong>${player.club}</strong>!<br>
+            ${nuevosTitulos.map(t => {
+              player.titulosClub += 1;
+              player.listaTitulos.push(`${t} (${player.club})`);
+              return `🥇 <strong>${t}</strong><br>`;
+            }).join('')}
+          </div>
+        `;
+      } else {
+        htmlTitulos = `<p><em>Este ciclo finaliza sin títulos oficiales en las vitrinas de ${player.club}.</em></p>`;
+      }
+
+      // Selección y rescate
+      let htmlSeleccion = "";
+      if (suerte < 25 && player.edad >= 22 && player.edad <= 34 && randomInt(1, 100) <= 40) {
+        player.media = Math.min(99, player.media + 5);
+        player.titulosSeleccion += 1;
+        player.listaTitulos.push(`🌍 Copa del Mundo / Mundial (${player.nacionalidad})`);
+        player.partidosSeleccion += 7;
+        const golesRes = esAtacante ? randomInt(6, 9) : randomInt(1, 3);
+        player.golesSeleccion += golesRes;
+
+        let botaMundialHtml = "";
+        if (esAtacante && golesRes >= 6) {
+          player.pichichisMundial += 1;
+          player.listaPremiosIndiv.push(`⚽ Bota de Oro del Mundial (Máximo goleador con ${player.nacionalidad})`);
+          botaMundialHtml = `<div style="color: #fde047; font-weight: bold; margin-top: 6px;">👟 ¡¡BOTA DE ORO DEL MUNDIAL!! Máximo artillero absoluto del torneo con ${golesRes} goles.</div>`;
+        }
+
+        htmlSeleccion = `
+          <div class="resurreccion-box">
+            <div style="color: #a5b4fc; font-weight: 800; font-size: 1.1rem; margin-bottom: 6px;">⚡ ¡¡EL RESURGIR DE LA CENIZA: HÉROE NACIONAL!!</div>
+            <div style="font-size: 0.95rem; line-height: 1.6;">
+              <strong>Parecía que estabas totalmente acabado en tu club</strong> y la prensa exigía que te quedaras fuera. Sin embargo, en un giro dramático, el seleccionador de <strong>${player.nacionalidad}</strong> confió en ti para el Mundial de rebote.<br><br>
+              ¡Y respondiste a lo grande! Marcaste goles decisivos, lideraste el vestuario y <strong>acabas de levantar la Copa del Mundo como la estrella indiscutible del torneo</strong>.
+            </div>
+            <div style="margin-top: 10px; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 6px; color: #facc15; font-weight: bold;">
+              🚀 ¡REVALORIZACIÓN TOTAL! Ganas el Mundial y subes un astronómico +5 DE MEDIA (Nueva media: ${player.media}).
+            </div>
+            ${botaMundialHtml}
+          </div>
+        `;
+      } else if (player.media >= 73 && suerte >= 35) {
+        const partSel = randomInt(6, 14);
+        let golSel = 0;
+        if (player.posicion === "Portero") golSel = 0;
+        else if (player.posicion.includes("Defensa") || player.posicion.includes("Pivote")) golSel = pickRandom([0, 0, 1]);
+        else if (player.posicion.includes("Centro")) golSel = randomInt(1, 3);
+        else golSel = randomInt(3, 8);
+
+        player.partidosSeleccion += partSel;
+        player.golesSeleccion += golSel;
+
+        let copasSel = "";
+        if (randomInt(1, 100) <= 50 && player.media >= 77) {
+          player.titulosSeleccion += 1;
+          player.listaTitulos.push(`🏆 Torneo Continental de Selecciones (${player.nacionalidad})`);
+          copasSel += `<div style="color: #facc15; margin-top: 6px; font-weight: bold;">⭐ ¡¡CAMPEÓN CONTINENTAL!! Levantaste el trofeo continental con ${player.nacionalidad}.</div>`;
+        }
+
+        if (randomInt(1, 100) <= 40 && player.media >= 80) {
+          player.titulosSeleccion += 1;
+          player.listaTitulos.push(`🌍 Copa del Mundo / Mundial (${player.nacionalidad})`);
+          copasSel += `<div style="color: #facc15; margin-top: 6px; font-weight: bold;">🌍 ¡¡CAMPEÓN DEL MUNDO!! Conquistaste el Mundial con ${player.nacionalidad}.</div>`;
+          if (esAtacante && golSel >= 5 && randomInt(1, 100) <= 55) {
+            player.pichichisMundial += 1;
+            player.listaPremiosIndiv.push(`⚽ Bota de Oro del Mundial (${player.nacionalidad})`);
+            copasSel += `<div style="color: #fde047; font-weight: bold; margin-top: 4px;">👟 ¡Bota de Oro del Mundial ganada con la selección!</div>`;
+          }
+        }
+
+        htmlSeleccion = `
+          <div class="seleccion-box">
+            🔵 <strong>Convocado con la Selección de ${player.nacionalidad}:</strong> Sumaste ${partSel} partidos y ${golSel} goles internacionales.
+            ${copasSel}
+          </div>
+        `;
+      } else {
+        htmlSeleccion = `<p><em>No fuiste convocado con ${player.nacionalidad} durante este período.</em></p>`;
+      }
+
+      // Premios y Pichichis
+      let htmlPremios = "";
+      let ganoBalonOro = false;
+      let ganoBotaOro = false;
+      let ganoGuanteOro = false;
+      let ganoOnceIdeal = false;
+      let htmlPichichis = "";
+
+      if (esAtacante) {
+        if (goles >= 30 && randomInt(1, 100) <= 65) {
+          player.pichichisLiga += 1;
+          player.listaPremiosIndiv.push(`⚽ Trofeo Pichichi de la Liga (Club: ${player.club})`);
+          htmlPichichis += `
+            <div style="background: rgba(234, 179, 8, 0.2); border-left: 4px solid #eab308; padding: 8px 12px; margin: 8px 0; font-weight: bold; color: #fde047;">
+              ⚽ ¡¡MÁXIMO GOLEADOR DE LA LIGA!! Te llevas el Trofeo Pichichi tras reventar las redes con ${player.club}.
+            </div>
+          `;
+        }
+        if (nuevosTitulos.includes("UEFA Champions League") && goles >= 32 && randomInt(1, 100) <= 55) {
+          player.pichichisChampions += 1;
+          player.listaPremiosIndiv.push(`⚽ Máximo Goleador de la UEFA Champions League (${player.club})`);
+          htmlPichichis += `
+            <div style="background: rgba(59, 130, 246, 0.2); border-left: 4px solid #3b82f6; padding: 8px 12px; margin: 8px 0; font-weight: bold; color: #93c5fd;">
+              ⚽ ¡MÁXIMO GOLEADOR DE LA CHAMPIONS! Nadie marcó más goles que tú en las noches mágicas de Europa.
+            </div>
+          `;
+        }
+      }
+
+      if (suerte >= 80 && player.media >= 86 && nuevosTitulos.length > 0 && randomInt(1, 100) <= 55) {
+        ganoBalonOro = true;
+        player.balonesDeOro += 1;
+        player.listaPremiosIndiv.push(`🟡 Balón de Oro (Edad: ${player.edad} años)`);
+      }
+
+      if (esAtacante && goles >= 40 && randomInt(1, 100) <= 60) {
+        ganoBotaOro = true;
+        player.botasDeOro += 1;
+        player.listaPremiosIndiv.push(`👟 Bota de Oro Europea (Edad: ${player.edad} años - ${goles} goles)`);
+      } else if (player.posicion === "Portero" && porteriasCero >= 28 && randomInt(1, 100) <= 60) {
+        ganoGuanteOro = true;
+        player.guantesDeOro += 1;
+        player.listaPremiosIndiv.push(`🧤 Guante de Oro Mundial (Edad: ${player.edad} años)`);
+      }
+
+      if (!ganoBalonOro && (suerte >= 70 || player.media >= 84) && randomInt(1, 100) <= 65) {
+        ganoOnceIdeal = true;
+        player.vecesOnceIdeal += 1;
+      }
+
+      if (ganoBalonOro || ganoBotaOro || ganoGuanteOro || ganoOnceIdeal) {
+        htmlPremios = `
+          <div class="premios-box">
+            <div style="color: #facc15; font-weight: bold; margin-bottom: 6px;">GALA INTERNACIONAL: PREMIOS Y DISTINCIONES</div>
+            ${ganoBalonOro ? `<p style="margin: 4px 0; color: #fef08a;">🟡 <strong>¡¡BALÓN DE ORO!!</strong> Declarado oficialmente el mejor futbolista del planeta.</p>` : ''}
+            ${ganoBotaOro ? `<p style="margin: 4px 0;">👟 <strong>¡BOTA DE ORO CONTINENTAL!</strong> Máximo goleador de toda Europa.</p>` : ''}
+            ${ganoGuanteOro ? `<p style="margin: 4px 0;">🧤 <strong>¡GUANTE DE ORO!</strong> Mejor guardameta internacional del año.</p>` : ''}
+            ${ganoOnceIdeal ? `<p style="margin: 4px 0; opacity: 0.9;">⭐ Elegido en el <strong>Once Ideal Mundial FIFPRO</strong>.</p>` : ''}
+          </div>
+        `;
+      }
+
+      let btnAvanzar = "";
+      if (player.numeroFicha >= 11) {
+        btnAvanzar = `<button class="btn-primario" onclick="renderFin()">Colgar las botas: Fin de tu trayectoria profesional</button>`;
+      } else {
+        btnAvanzar = `<button class="btn-primario" onclick="renderDespacho()">Avanzar al despacho: Decisiones de futuro</button>`;
+      }
+
+      container.innerHTML = `
+        <div class="tarjeta-ficha ${claseFicha}">
+          <div class="badge-etapa">${nombreEtapa}</div>
+          <h2>Ficha ${player.numeroFicha} de 11 · ${player.nombre} (#${player.dorsal})</h2>
+          <div style="font-size: 0.95rem; opacity: 0.95; margin-bottom: 10px;">
+            <strong>Edad:</strong> ${player.edad} años | <strong>Club:</strong> ${player.club} | <strong>Media:</strong> ${player.media} / 99
+          </div>
+          <div class="progreso-carrera">
+            ${Array.from({length: 11}, (_, i) => `<div class="progreso-bloque ${i < player.numeroFicha ? 'activo' : ''}"></div>`).join('')}
+          </div>
+        </div>
+
+        ${htmlRendimiento}
+        ${htmlMomento}
+
+        <hr>
+        <h3>🏆 Palmarés de Club en este ciclo</h3>
+        ${htmlTitulos}
+
+        <hr>
+        <h3>🌍 Selección Nacional (${player.nacionalidad})</h3>
+        ${htmlSeleccion}
+
+        <hr>
+        <h3>🎖 Premios Individuales y Pichichis</h3>
+        ${htmlPichichis}
+        ${htmlPremios}
+
+        <hr>
+        ${btnAvanzar}
+      `;
+    }
+
+    function renderDespacho() {
+      let htmlOpciones = "";
+
+      if (player.numeroFicha === 1) {
+        const offA = pickRandom(clubesEuropaMedios);
+        const offB = pickRandom(clubesEuropaBajos);
+        htmlOpciones = `
+          <div style="background: rgba(56, 189, 248, 0.15); border-left: 4px solid #38bdf8; padding: 14px; margin: 15px 0;">
+            ✈ <strong>Tu ciclo en la academia ha terminado.</strong> Dos clubes europeos presentan ofertas formales.
+          </div>
+          <div class="lista-opciones">
+            <button class="btn-opcion" onclick="ejecutarDecision({club: '${offA}'})">Firmar por el <strong>${offA}</strong> (Club de alta exigencia y noches europeas)</button>
+            <button class="btn-opcion" onclick="ejecutarDecision({club: '${offB}', mediaDelta: 1})">Firmar por el <strong>${offB}</strong> (Club modesto: titularidad y +1 de media)</button>
+          </div>
+        `;
+      } else if (player.numeroFicha <= 5) {
+        const azarDilema = randomInt(1, 4);
+        if (azarDilema === 1) {
+          htmlOpciones = `
+            <div style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%); border-left: 5px solid #ef4444; padding: 14px; margin: 15px 0;">
+              🇮🇹 <strong>¡GUERRA EN LA SERIE A ITALIANA!</strong><br>
+              Tanto el <strong>AC Milan</strong> como la <strong>Juventus</strong> quieren convertirte en su gran referente.
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarDecision({club: 'AC Milan'})">Fichar por el <strong>AC Milan</strong> (La mística de San Siro)</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({club: 'Juventus'})">Fichar por la <strong>Juventus</strong> (Luchar por todos los títulos)</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({mediaDelta: 1})">Rechazar a Italia y quedarte en el <strong>${player.club}</strong> (+1 de media)</button>
+            </div>
+          `;
+        } else if (azarDilema === 2) {
+          htmlOpciones = `
+            <div style="background: rgba(14, 165, 233, 0.15); border-left: 4px solid #0ea5e9; padding: 14px; margin: 15px 0;">
+              🏃‍♂️ <strong>EXIGENCIA TÁCTICA: PRESIÓN ASFIXIANTE Y REPLIEGUE JOVEN</strong><br>
+              El míster te exige presionar la salida y vaciarte en defensa en cada jugada. Eres joven y tus pulmones aguantan todo.<br>
+              <small style="color: #94a3b8;">(Juventud: 85% de ganar +2 de media / 15% de sobrecarga muscular y -1)</small>
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarPresionJoven()">Aceptar el sacrificio: vaciarte en defensa y presión</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({})">Dosificar esfuerzos para cuidar el físico</button>
+            </div>
+          `;
+        } else if (azarDilema === 3) {
+          htmlOpciones = `
+            <div style="background: rgba(16, 185, 129, 0.15); border-left: 4px solid #10b981; padding: 14px; margin: 15px 0;">
+              🥗 <strong>PLAN DE NUTRICIÓN Y METABOLISMO DE ÉLITE</strong><br>
+              Un nutricionista de prestigio te propone una dieta metabólica estricta y chef personal.<br>
+              <small style="color: #94a3b8;">(Riesgo: 75% éxito de +1 o +2 de media / 25% fatiga y perder -1)</small>
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarDieta()">Aceptar el plan nutricional estricto</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({})">Mantener tu alimentación habitual sin riesgos</button>
+            </div>
+          `;
+        } else {
+          const interesado = pickRandom(clubesEuropaMedios);
+          htmlOpciones = `
+            <div style="background: rgba(59, 130, 246, 0.15); border-left: 4px solid #3b82f6; padding: 14px; margin: 15px 0;">
+              📰 <strong>OFERTA DE MERCADO:</strong> El <strong>${interesado}</strong> ofrece una tentadora prima de fichaje.
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarDecision({club: '${interesado}'})">Aceptar el traspaso y mudarte al <strong>${interesado}</strong></button>
+              <button class="btn-opcion" onclick="ejecutarDecision({mediaDelta: 1})">Renovar contrato y seguir en el <strong>${player.club}</strong> (+1 de media)</button>
+            </div>
+          `;
+        }
+      } else if (player.numeroFicha <= 7) {
+        const azarPrime = randomInt(1, 4);
+        if (azarPrime === 1 && player.media >= 82) {
+          htmlOpciones = `
+            <div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.25) 0%, rgba(15, 23, 42, 0.9) 100%); border-left: 5px solid #facc15; padding: 14px; margin: 15px 0;">
+              🔥 <strong>¡TERREMOTO EN ESPAÑA: EL CLÁSICO A TUS PIES!</strong><br>
+              El <strong>Real Madrid</strong> y el <strong>FC Barcelona</strong> depositan tu cláusula de rescisión a la vez.
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarDecision({club: 'Real Madrid'})">Fichar por el <strong>Real Madrid</strong> (El rey de Europa y camino al Balón de Oro)</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({club: 'FC Barcelona'})">Fichar por el <strong>FC Barcelona</strong> (El estilo legendario y liderar el proyecto)</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({mediaDelta: 1})">Rechazar a ambos y ser la leyenda del <strong>${player.club}</strong> (+1 de media)</button>
+            </div>
+          `;
+        } else if (azarPrime === 2) {
+          htmlOpciones = `
+            <div style="background: rgba(14, 165, 233, 0.15); border-left: 4px solid #0ea5e9; padding: 14px; margin: 15px 0;">
+              🏴󠁧󠁢󠁥󠁮󠁧󠁿 <strong>BATALLA EN INGLATERRA</strong><br>
+              Propuestas astronómicas del <strong>Manchester City</strong> y del <strong>Arsenal FC</strong>.
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarDecision({club: 'Manchester City'})">Fichar por el <strong>Manchester City</strong> (Fútbol total y plantilla galáctica)</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({club: 'Arsenal FC'})">Fichar por el <strong>Arsenal FC</strong> (Liderar a los Gunners a la gloria)</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({})">Seguir defendiendo el escudo del <strong>${player.club}</strong></button>
+            </div>
+          `;
+        } else if (azarPrime === 3) {
+          htmlOpciones = `
+            <div style="background: rgba(245, 158, 11, 0.15); border-left: 4px solid #f59e0b; padding: 14px; margin: 15px 0;">
+              ⚔ <strong>EL JUGADOR TOTAL: PRESIÓN EN PLENO PRIME</strong><br>
+              El míster te pide liderar la presión arriba sin perder pólvora en ataque.<br>
+              <small style="color: #94a3b8;">(Prime: 75% consagrarte como jugador total +1 o +2 / 25% llegar fundido a final de curso -1)</small>
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarPresionPrime()">Comprometerte al 100% en tareas defensivas</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({})">Priorizar tu frescura ofensiva y desentenderte del repliegue</button>
+            </div>
+          `;
+        } else {
+          htmlOpciones = `
+            <div style="background: rgba(16, 185, 129, 0.15); border-left: 4px solid #10b981; padding: 14px; margin: 15px 0;">
+              🥩 <strong>PLAN DE NUTRICIÓN MOLECULAR Y LONGEVIDAD</strong><br>
+              Afinar tu porcentaje graso al milímetro para prolongar tu pico de rendimiento.<br>
+              <small style="color: #94a3b8;">(Riesgo: 75% éxito +1 o +2 / 25% bajón energético -1)</small>
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarDieta()">Someterte a la dieta estricta</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({})">Seguir con tus hábitos habituales</button>
+            </div>
+          `;
+        }
+      } else {
+        const azarVet = randomInt(1, 4);
+        if (azarVet === 1) {
+          htmlOpciones = `
+            <div style="background: rgba(245, 158, 11, 0.15); border-left: 4px solid #f59e0b; padding: 14px; margin: 15px 0;">
+              🌟 <strong>CAPITÁN Y MENTOR DE LA CANTERA (${player.edad} años)</strong><br>
+              Ha irrumpido una joya de 17 años al primer equipo. El club te pide ser su tutor en el vestuario.<br>
+              <small style="color: #94a3b8;">(Riesgo: 80% éxito de liderazgo +1 o +2 / 20% conflicto y perder -1)</small>
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarMentor()">Aceptar ser su mentor (Transmitir tus galones)</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({})">Rechazarlo: en el fútbol profesional cada uno debe ganarse su puesto</button>
+            </div>
+          `;
+        } else if (azarVet === 2) {
+          htmlOpciones = `
+            <div style="background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; padding: 14px; margin: 15px 0;">
+              🛑 <strong>EL DESGASTE DE LOS AÑOS: ¿DEFENDER A TUS ${player.edad} AÑOS?</strong><br>
+              El míster pide presión alta constante. A tu edad, forzar sprints continuos castiga tus rodillas e isquios.<br>
+              <small style="color: #94a3b8;">(Veteranía: 50% de admiración y galones +1 / 50% rotura muscular y perder -2 de media)</small>
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarPresionVeterano()">Forzar la máquina y presionar como un canterano más</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({})">Dosificar inteligentemente y jugar con la cabeza</button>
+            </div>
+          `;
+        } else if (azarVet === 3) {
+          const exotico = pickRandom(clubesExoticos);
+          const modesto = pickRandom(clubesEuropaBajos);
+          htmlOpciones = `
+            <div style="background: rgba(148, 163, 184, 0.15); border-left: 4px solid #94a3b8; padding: 14px; margin: 15px 0;">
+              ⌛ <strong>RECTA FINAL DE CARRERA:</strong> El club prepara la transición y hay ofertas sobre la mesa.
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarDecision({club: '${exotico}'})">Aceptar un retiro dorado en el <strong>${exotico}</strong> (Contrato multimillonario)</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({club: '${modesto}'})">Fichar por un club modesto como el <strong>${modesto}</strong> (Aportar tu jerarquía)</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({})">Pelear por tu puesto y quedarte hasta el final en el <strong>${player.club}</strong></button>
+            </div>
+          `;
+        } else {
+          htmlOpciones = `
+            <div style="background: rgba(16, 185, 129, 0.15); border-left: 4px solid #10b981; padding: 14px; margin: 15px 0;">
+              🥗 <strong>PLAN DE REGENERACIÓN FÍSICA PARA VETERANOS</strong><br>
+              A tus ${player.edad} años, te ofrecen un protocolo biológico para cuidar las articulaciones.<br>
+              <small style="color: #94a3b8;">(Riesgo: 75% éxito +1 / 25% bajón físico -1)</small>
+            </div>
+            <div class="lista-opciones">
+              <button class="btn-opcion" onclick="ejecutarRegeneracion()">Someterte al plan regenerativo</button>
+              <button class="btn-opcion" onclick="ejecutarDecision({})">Confiar en tus rutinas de siempre</button>
+            </div>
+          `;
+        }
+      }
+
+      container.innerHTML = `
+        <h3>💼 Despacho y Decisiones de Futuro</h3>
+        <p><strong>Situación:</strong> ${player.nombre} (#${player.dorsal}) | <strong>Edad:</strong> ${player.edad} años | <strong>Club:</strong> ${player.club} | <strong>Media:</strong> ${player.media}</p>
+        <p>Tu agente te presenta las opciones antes de saltar a disputar la siguiente etapa:</p>
+        <hr>
+        ${htmlOpciones}
+      `;
+    }
+
+    function ejecutarDecision(opts) {
+      if (opts.club) player.club = opts.club;
+      if (opts.mediaDelta) player.media = Math.min(99, Math.max(40, player.media + opts.mediaDelta));
+      player.edad += 2;
+      player.numeroFicha += 1;
+      simularFicha();
+    }
+
+    function ejecutarPresionJoven() {
+      const delta = (randomInt(1, 100) <= 85) ? 2 : -1;
+      ejecutarDecision({mediaDelta: delta});
+    }
+
+    function ejecutarPresionPrime() {
+      const delta = (randomInt(1, 100) <= 75) ? pickRandom([1, 2]) : -1;
+      ejecutarDecision({mediaDelta: delta});
+    }
+
+    function ejecutarPresionVeterano() {
+      const delta = (randomInt(1, 100) <= 50) ? 1 : -2;
+      ejecutarDecision({mediaDelta: delta});
+    }
+
+    function ejecutarDieta() {
+      const delta = (randomInt(1, 100) <= 75) ? pickRandom([1, 2]) : -1;
+      ejecutarDecision({mediaDelta: delta});
+    }
+
+    function ejecutarMentor() {
+      const delta = (randomInt(1, 100) <= 80) ? pickRandom([1, 2]) : -1;
+      ejecutarDecision({mediaDelta: delta});
+    }
+
+    function ejecutarRegeneracion() {
+      const delta = (randomInt(1, 100) <= 75) ? 1 : -1;
+      ejecutarDecision({mediaDelta: delta});
+    }
+
+    function renderFin() {
+      const totTitulos = player.titulosClub + player.titulosSeleccion;
+      const esAtacante = (player.posicion.includes("Delantero") || player.posicion.includes("Extremo") || player.posicion.includes("Mediapunta"));
+
+      let veredicto = "";
+      if (player.balonesDeOro >= 2) {
+        veredicto = "🐐 <strong>EL MAYOR DE TODOS LOS TIEMPOS (G.O.A.T.):</strong> Múltiples Balones de Oro te colocan en el Olimpo absoluto del fútbol junto a los más grandes de la historia.";
+      } else if (player.balonesDeOro === 1 || player.botasDeOro >= 2 || player.guantesDeOro >= 1 || player.pichichisMundial >= 1) {
+        veredicto = "👑 <strong>ESTRELLA GENERACIONAL:</strong> Alcanzaste la cima del planeta y fuiste el líder absoluto de tu época dorada.";
+      } else if (totTitulos >= 6) {
+        veredicto = "⭐ <strong>COLECCIONISTA DE COPAS:</strong> Un ganador nato que llenó las vitrinas de los clubes por donde pasó.";
+      } else {
+        veredicto = "⚽ <strong>CARRERA PROFESIONAL DE ÉLITE:</strong> Competiste con honor al máximo nivel internacional durante dos décadas completas.";
+      }
+
+      container.innerHTML = `
+        <h1>🏆 Fin de la Carrera Profesional: ${player.nombre}</h1>
+        <p>A los <strong>${player.edad} años</strong>, cuelgas las botas definitivamente. Así queda el legado de tu carrera tras disputar tus 11 etapas oficiales:</p>
+
+        <div style="background: #1e293b; padding: 20px; border-radius: 8px; margin: 20px 0; line-height: 1.8;">
+          <p>• <strong>Nombre:</strong> ${player.nombre} (#${player.dorsal})</p>
+          <p>• <strong>Nacionalidad:</strong> ${player.nacionalidad} | <strong>Posición:</strong> ${player.posicion} | <strong>Pierna:</strong> ${player.pieHabil}</p>
+          <p>• <strong>Media final de retirada:</strong> ${player.media} / 99</p>
+          <p>• <strong>Partidos oficiales en clubes:</strong> ${player.partidosTotales} | <strong>Goles:</strong> ${player.golesTotales}</p>
+          ${(player.posicion === "Portero" || player.posicion.includes("Defensa")) ? `<p>• <strong>Porterías a cero acumuladas:</strong> ${player.porteriasCeroTotales}</p>` : ''}
+          <p>• <strong>Internacional con ${player.nacionalidad}:</strong> ${player.partidosSeleccion} partidos (${player.golesSeleccion} goles)</p>
+          <p>• <strong>Total de Títulos Colectivos:</strong> ${totTitulos} (Club: ${player.titulosClub} | Selección: ${player.titulosSeleccion})</p>
+          <p>• <strong>Distinciones individuales:</strong> 🟡 ${player.balonesDeOro} Balones de Oro | 👟 ${player.botasDeOro} Botas de Oro | 🧤 ${player.guantesDeOro} Guantes de Oro | ⭐ ${player.vecesOnceIdeal} Once Ideal FIFPRO</p>
+          ${esAtacante ? `<p>• <strong>Trofeos de Máximo Goleador:</strong> ⚽ ${player.pichichisLiga} Pichichis de Liga | ⚽ ${player.pichichisChampions} Goleador de Champions \vert{} ⚽${player.pichichisMundial} Botas de Oro en Mundiales</p>` : ''}
+        </div>
+
+        <h3>🏅 Vitrina de Títulos Colectivos:</h3>
+        <div style="margin: 10px 0;">
+          ${player.listaTitulos.length ? player.listaTitulos.map(t => `<p>• ${t}</p>`).join('') : '<p><em>No lograste levantar ningún título colectivo en tu carrera.</em></p>'}
+        </div>
+
+        <hr>
+        <h3>🎖️ Historial de Galardones Individuales:</h3>
+        <div style="margin: 10px 0;">
+          ${player.listaPremiosIndiv.length ? player.listaPremiosIndiv.map(pr => `<p>• ${pr}</p>`).join('') : '<p><em>No lograste cosechar premios individuales de máxima categoría.</em></p>'}
+        </div>
+
+        <hr>
+        <h3>Veredicto Histórico:</h3>
+        <p style="font-size: 1.05rem; margin: 12px 0;">${veredicto}</p>
+
+        <button class="btn-primario" onclick="location.reload()">Jugar una nueva carrera desde cero</button>
+      `;
+    }
+
+    // Iniciar juego
+    renderStart();
+  </script>
+</body>
+</html>

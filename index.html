@@ -119,8 +119,9 @@
     .cartel-stats {
       font-size: 0.9rem;
       background: rgba(0, 0, 0, 0.25);
-      padding: 8px 12px;
+      padding: 10px 14px;
       border-radius: 6px;
+      line-height: 1.6;
     }
 
     .cartel-oro {
@@ -139,12 +140,6 @@
       background: rgba(59, 130, 246, 0.15);
       border-color: #3b82f6;
       color: #bfdbfe;
-    }
-
-    .cartel-amarillo {
-      background: rgba(245, 158, 11, 0.15);
-      border-color: #f59e0b;
-      color: #fde68a;
     }
 
     .cartel-rojo {
@@ -238,37 +233,12 @@
       padding: 14px;
       margin: 15px 0;
     }
-
-    .tag-tier {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-left: 8px;
-      background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .tag-titulo-tier {
-      font-size: 0.75rem;
-      padding: 1px 6px;
-      border-radius: 3px;
-      margin-left: 6px;
-      font-weight: 600;
-    }
-    .tt-tier1 { background: #b91c1c; color: #fee2e2; }
-    .tt-tier2 { background: #c2410c; color: #ffedd5; }
-    .tt-tier3 { background: #d97706; color: #fef3c7; }
-    .tt-tier4 { background: #15803d; color: #dcfce7; }
-    .tt-tier5 { background: #475569; color: #f1f5f9; }
   </style>
 </head>
 <body>
   <div id="game-container"></div>
 
   <script>
-    // 1. SISTEMA DE 5 TIERS INTERNACIONALES (PAÍSES)
     const tier1 = ["España", "Francia", "Alemania", "Inglaterra", "Italia", "Argentina", "Brasil"];
     const tier2 = ["Portugal", "Países Bajos", "Uruguay", "Croacia", "Bélgica", "Colombia"];
     const tier3 = ["Marruecos", "Senegal", "México", "Estados Unidos", "Japón", "Chile", "Ecuador", "Polonia", "Turquía"];
@@ -278,25 +248,11 @@
     const paisesMundo = [...tier1, ...tier2, ...tier3, ...tier4, ...tier5];
 
     function obtenerTierPais(pais) {
-      if (tier1.includes(pais)) return { tier: 1, nombre: "Tier 1: Gigante Mundial", minMediaSel: 74, probCont: 38, probMun: 26, probRes: 25, reqCont: 79, reqMun: 83 };
-      if (tier2.includes(pais)) return { tier: 2, nombre: "Tier 2: Gran Potencia", minMediaSel: 74, probCont: 24, probMun: 14, probRes: 15, reqCont: 81, reqMun: 85 };
-      if (tier3.includes(pais)) return { tier: 3, nombre: "Tier 3: Nación Competitiva", minMediaSel: 73, probCont: 14, probMun: 5, probRes: 7, reqCont: 83, reqMun: 87 };
-      if (tier4.includes(pais)) return { tier: 4, nombre: "Tier 4: Selección Media", minMediaSel: 71, probCont: 7, probMun: 2, probRes: 3, reqCont: 85, reqMun: 89 };
-      return { tier: 5, nombre: "Tier 5: País Modesto", minMediaSel: 69, probCont: 3, probMun: 1, probRes: 1, reqCont: 87, reqMun: 91 };
-    }
-
-    // 2. SISTEMA DE 5 TIERS DE DIFICULTAD DE TÍTULOS
-    // Tier 1: Cúspide Imposible (Mundial, Champions)
-    // Tier 2: Gloria Mayor (Liga, Continental Selecciones)
-    // Tier 3: Éxito Continental & Intercontinental (Europa League, Mundial de Clubes)
-    // Tier 4: Copa Doméstica
-    // Tier 5: Supercopas (Nacional, UEFA)
-    function tagTierTitulo(titulo) {
-      if (titulo.includes("Mundial") || titulo.includes("Champions")) return `<span class="tag-titulo-tier tt-tier1">Tier 1: Cúspide</span>`;
-      if (titulo.includes("Liga") || titulo.includes("Continental de Selecciones")) return `<span class="tag-titulo-tier tt-tier2">Tier 2: Mayor</span>`;
-      if (titulo.includes("Europa League") || titulo.includes("Clubes de la FIFA")) return `<span class="tag-titulo-tier tt-tier3">Tier 3: Alta</span>`;
-      if (titulo.includes("Copa Doméstica")) return `<span class="tag-titulo-tier tt-tier4">Tier 4: Media</span>`;
-      return `<span class="tag-titulo-tier tt-tier5">Tier 5: Menor</span>`;
+      if (tier1.includes(pais)) return { tier: 1, minMediaSel: 74, probCont: 38, probMun: 26, probRes: 25, reqCont: 79, reqMun: 83 };
+      if (tier2.includes(pais)) return { tier: 2, minMediaSel: 74, probCont: 24, probMun: 14, probRes: 15, reqCont: 81, reqMun: 85 };
+      if (tier3.includes(pais)) return { tier: 3, minMediaSel: 73, probCont: 14, probMun: 5, probRes: 7, reqCont: 83, reqMun: 87 };
+      if (tier4.includes(pais)) return { tier: 4, minMediaSel: 71, probCont: 7, probMun: 2, probRes: 3, reqCont: 85, reqMun: 89 };
+      return { tier: 5, minMediaSel: 69, probCont: 3, probMun: 1, probRes: 1, reqCont: 87, reqMun: 91 };
     }
 
     const listaPosiciones = [
@@ -354,9 +310,16 @@
       listaTitulos: [],
       partidosTotales: 0,
       golesTotales: 0,
+      asistenciasTotales: 0,
       partidosSeleccion: 0,
       golesSeleccion: 0,
+      asistenciasSeleccion: 0,
       porteriasCeroTotales: 0,
+      pasesCompletadosTotales: 0,
+      pasesClaveTotales: 0,
+      regatesTotales: 0,
+      recuperacionesTotales: 0,
+      paradasTotales: 0,
       balonesDeOro: 0,
       botasDeOro: 0,
       guantesDeOro: 0,
@@ -386,11 +349,9 @@
       return res;
     }
 
-    // Modificador de dificultad para subidas de media: cuanto más alta es, más cuesta progresar
     function aplicarDeltaMedia(delta) {
       if (delta > 0) {
         if (player.media >= 88) {
-          // A partir de 88 solo sube 1 punto si el delta era 2 o más
           delta = (delta >= 2) ? 1 : 0;
         } else if (player.media >= 83 && delta >= 3) {
           delta = 2;
@@ -404,17 +365,9 @@
     function renderStart() {
       container.innerHTML = `
         <h1>⚽ 11 FICHAS: CARRERA DE FÚTBOL</h1>
-        <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px;">Edición Realista: Exigencia, Tiers de Títulos y Progresión Fina</p>
-        <p>Vive una trayectoria profesional de 20 años a lo largo de <strong>11 etapas bianuales</strong> (17 a 37 años).</p>
-        <p>Subir de media y consolidarse en los 85+ o 90+ exige temporadas brillantes. Además, conquistar cada título responde a su prestigio real:</p>
-        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin: 15px 0; font-size: 0.88rem; line-height: 1.6;">
-          🏆 <strong>Tier List de Dificultad de Trofeos:</strong><br>
-          • <span class="tag-titulo-tier tt-tier1">Tier 1: Cúspide</span> <strong>Champions League & Copa del Mundo</strong> (Dificultad Extrema).<br>
-          • <span class="tag-titulo-tier tt-tier2">Tier 2: Mayor</span> <strong>Liga Nacional & Eurocopa / Copa América</strong> (Dificultad Muy Alta).<br>
-          • <span class="tag-titulo-tier tt-tier3">Tier 3: Alta</span> <strong>UEFA Europa League & Mundial de Clubes</strong> (Dificultad Alta).<br>
-          • <span class="tag-titulo-tier tt-tier4">Tier 4: Media</span> <strong>Copa Doméstica</strong> (El torneo del KO para clubes competitivos).<br>
-          • <span class="tag-titulo-tier tt-tier5">Tier 5: Menor</span> <strong>Supercopas Nacionales y Europeas</strong>.
-        </div>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px;">De Promesa Juvenil a Leyenda del Deporte Rey</p>
+        <p>Vive una trayectoria profesional completa de 20 años a lo largo de <strong>11 etapas bianuales</strong> (desde los 17 hasta los 37 años).</p>
+        <p>Define tus orígenes, posición y pie hábil, rinde en los momentos clave y toma decisiones en el despacho para forjar tu palmarés histórico.</p>
         <hr>
         <button class="btn-primario" onclick="renderNacionalidad()">Comenzar tu carrera profesional</button>
       `;
@@ -426,12 +379,11 @@
         <h3>🌍 Paso 1: País de Nacimiento</h3>
         <p>¿Bajo qué bandera darás tus primeros toques al balón?</p>
         <div class="lista-opciones">
-          ${opciones.map(p => {
-            const tInfo = obtenerTierPais(p);
-            return `<button class="btn-opcion" onclick="elegirNacionalidad('${p}')">
-              Nacer en <strong>${p}</strong> <span class="tag-tier">${tInfo.nombre}</span>
-            </button>`;
-          }).join('')}
+          ${opciones.map(p => `
+            <button class="btn-opcion" onclick="elegirNacionalidad('${p}')">
+              Nacer en <strong>${p}</strong>
+            </button>
+          `).join('')}
         </div>
       `;
     }
@@ -445,7 +397,7 @@
       const opciones = pickDistinct(listaPosiciones, 3);
       container.innerHTML = `
         <h3>🏃 Paso 2: Posición en el Campo</h3>
-        <p><strong>Nacionalidad:</strong> ${player.nacionalidad} (${obtenerTierPais(player.nacionalidad).nombre})</p>
+        <p><strong>Nacionalidad:</strong> ${player.nacionalidad}</p>
         <p>¿Cuál es tu rol natural sobre el terreno de juego?</p>
         <div class="lista-opciones">
           ${opciones.map(pos => `<button class="btn-opcion" onclick="elegirPosicion('${pos}')">Jugar de <strong>${pos}</strong></button>`).join('')}
@@ -512,17 +464,16 @@
       player.club = c;
       player.edad = 17;
       player.numeroFicha = 1;
-      player.media = randomInt(63, 69); // Media inicial más contenida
+      player.media = randomInt(63, 69);
       renderFichaInicial();
     }
 
     function renderFichaInicial() {
-      const tInfo = obtenerTierPais(player.nacionalidad);
       container.innerHTML = `
         <h3>📋 Ficha Inicial Oficial: Inicio de Carrera</h3>
         <div style="background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; padding: 18px; margin: 15px 0; line-height: 1.8;">
           <p><strong>Nombre:</strong> ${player.nombre} (#${player.dorsal})</p>
-          <p><strong>Nacionalidad:</strong> ${player.nacionalidad} <span class="tag-tier">${tInfo.nombre}</span></p>
+          <p><strong>Nacionalidad:</strong> ${player.nacionalidad}</p>
           <p><strong>Posición:</strong> ${player.posicion} | <strong>Pierna:</strong> ${player.pieHabil}</p>
           <p><strong>Club inicial:</strong> ${player.club}</p>
           <p><strong>Edad inicial:</strong> 17 años</p>
@@ -546,181 +497,284 @@
 
       const suerte = randomInt(1, 100);
       let nuevosTitulos = [];
-      let porteriasCero = 0;
       const esAtacante = (player.posicion.includes("Delantero") || player.posicion.includes("Extremo") || player.posicion.includes("Mediapunta"));
+      const esMedio = (player.posicion === "Centrocampista" || player.posicion === "Mediapunta" || player.posicion === "Pivote Defensivo");
+      const esDefensa = (player.posicion.includes("Defensa") || player.posicion.includes("Lateral"));
+      const esPortero = (player.posicion === "Portero");
+
       const esClubChampions = clubesEuropaTop.includes(player.club);
       const esClubEuropaLeague = clubesEuropaMedios.includes(player.club);
 
       let subida = 0;
       let partidos = 0;
       let goles = 0;
-      let htmlRendimiento = "";
+      let asistencias = 0;
+      let porteriasCero = 0;
+      let pasesComp = 0;
+      let pasesClave = 0;
+      let regates = 0;
+      let recuperaciones = 0;
+      let paradas = 0;
+      let precPase = 0;
+      let pctParadas = 0;
+      let golesEncajados = 0;
 
-      // ESCALADO DE PROGRESIÓN MÁS EXIGENTE
+      let htmlRendimiento = "";
+      let textoNivel = "";
+      let claseCartel = "";
+
       if (suerte >= 82) {
-        // Año estelar: subidas de +3 a +5 en jóvenes, +1 a +2 en prime
         subida = (player.numeroFicha <= 3) ? randomInt(3, 5) : ((player.numeroFicha <= 7) ? randomInt(1, 3) : randomInt(0, 1));
         aplicarDeltaMedia(subida);
-        partidos = randomInt(60, 74);
+        partidos = randomInt(64, 76);
+        textoNivel = "🌟 TEMPORADA MAGISTRAL";
+        claseCartel = "cartel-oro";
 
-        if (player.posicion === "Portero") {
-          goles = 0;
-          porteriasCero = randomInt(24, 36);
-          player.porteriasCeroTotales += porteriasCero;
-        } else if (player.posicion.includes("Defensa") || player.posicion.includes("Lateral")) {
-          goles = randomInt(1, 3);
-          porteriasCero = randomInt(20, 32);
-          player.porteriasCeroTotales += porteriasCero;
-        } else if (player.posicion.includes("Pivote")) {
-          goles = randomInt(2, 6);
-        } else if (player.posicion.includes("Centro")) {
-          goles = randomInt(8, 14);
-        } else if (player.posicion.includes("Mediapunta")) {
-          goles = randomInt(12, 20);
-        } else {
-          goles = randomInt(30, 46);
+        if (esPortero) {
+          porteriasCero = randomInt(26, 36);
+          paradas = randomInt(150, 220);
+          pctParadas = randomInt(80, 88);
+          golesEncajados = randomInt(35, 50);
+        } else if (esDefensa) {
+          goles = randomInt(2, 5);
+          asistencias = player.posicion.includes("Lateral") ? randomInt(8, 16) : randomInt(2, 6);
+          porteriasCero = randomInt(22, 32);
+          recuperaciones = randomInt(180, 260);
+          pasesComp = randomInt(1600, 2400);
+          precPase = randomInt(86, 93);
+        } else if (player.posicion === "Pivote Defensivo") {
+          goles = randomInt(3, 7);
+          asistencias = randomInt(6, 12);
+          recuperaciones = randomInt(210, 290);
+          pasesComp = randomInt(2400, 3200);
+          pasesClave = randomInt(40, 70);
+          precPase = randomInt(89, 94);
+        } else if (player.posicion === "Centrocampista") {
+          goles = randomInt(9, 16);
+          asistencias = randomInt(14, 24);
+          pasesComp = randomInt(2500, 3400);
+          pasesClave = randomInt(80, 130);
+          precPase = randomInt(88, 93);
+        } else if (player.posicion === "Mediapunta") {
+          goles = randomInt(14, 22);
+          asistencias = randomInt(18, 30);
+          pasesClave = randomInt(110, 160);
+          regates = randomInt(90, 150);
+          precPase = randomInt(84, 90);
+        } else if (player.posicion.includes("Extremo")) {
+          goles = randomInt(22, 34);
+          asistencias = randomInt(16, 26);
+          regates = randomInt(140, 210);
+          pasesClave = randomInt(70, 110);
+        } else { // Delantero Centro
+          goles = randomInt(36, 52);
+          asistencias = randomInt(8, 16);
+          regates = randomInt(60, 110);
+          pasesClave = randomInt(40, 70);
         }
 
-        htmlRendimiento = `
-          <div class="cartel cartel-oro">
-            <div class="cartel-titular">🌟 TEMPORADA MAGISTRAL</div>
-            <div class="cartel-cuerpo">Rendimiento determinante en las noches clave. Marcas diferencias y tu estatus continental se dispara.</div>
-            <div class="cartel-stats">
-              📊 Bloque de 2 años: ${partidos} partidos | ${goles} goles ${porteriasCero > 0 ? `| 🧤 ${porteriasCero} porterías a cero` : ''}<br>
-              📈 Progresión: <strong>+${subida} de media</strong> (Media actual: ${player.media})
-            </div>
-          </div>
-        `;
-
-        // Títulos Tier 2 y Tier 1 ajustados por dificultad
         if (player.media >= 81 && randomInt(1, 100) <= 45) nuevosTitulos.push("Liga Nacional");
         if (randomInt(1, 100) <= 50) nuevosTitulos.push("Copa Doméstica");
-        
-        // Tier 1: Champions League (Exige club top, media alta y probabilidad exigente)
-        if (esClubChampions && player.media >= 84 && randomInt(1, 100) <= 28) {
-          nuevosTitulos.push("UEFA Champions League");
-        } else if (esClubEuropaLeague && player.media >= 78 && randomInt(1, 100) <= 40) {
-          // Tier 3: Europa League
-          nuevosTitulos.push("UEFA Europa League");
-        }
+        if (esClubChampions && player.media >= 84 && randomInt(1, 100) <= 28) nuevosTitulos.push("UEFA Champions League");
+        else if (esClubEuropaLeague && player.media >= 78 && randomInt(1, 100) <= 40) nuevosTitulos.push("UEFA Europa League");
 
       } else if (suerte >= 52) {
-        // Notable: subida de +1 a +3 en jóvenes, 0 a +1 en prime
         subida = (player.numeroFicha <= 3) ? randomInt(1, 3) : ((player.numeroFicha <= 7) ? randomInt(0, 1) : 0);
         aplicarDeltaMedia(subida);
-        partidos = randomInt(50, 64);
+        partidos = randomInt(52, 64);
+        textoNivel = "📈 RENDIMIENTO SÓLIDO Y TITULARIDAD";
+        claseCartel = "cartel-verde";
 
-        if (player.posicion === "Portero") {
-          goles = 0;
-          porteriasCero = randomInt(16, 26);
-          player.porteriasCeroTotales += porteriasCero;
-        } else if (player.posicion.includes("Defensa") || player.posicion.includes("Lateral")) {
-          goles = randomInt(0, 2);
+        if (esPortero) {
+          porteriasCero = randomInt(16, 24);
+          paradas = randomInt(120, 170);
+          pctParadas = randomInt(74, 80);
+          golesEncajados = randomInt(45, 65);
+        } else if (esDefensa) {
+          goles = randomInt(1, 3);
+          asistencias = player.posicion.includes("Lateral") ? randomInt(4, 10) : randomInt(1, 3);
           porteriasCero = randomInt(14, 22);
-          player.porteriasCeroTotales += porteriasCero;
-        } else if (player.posicion.includes("Pivote")) {
+          recuperaciones = randomInt(130, 190);
+          pasesComp = randomInt(1200, 1800);
+          precPase = randomInt(83, 89);
+        } else if (player.posicion === "Pivote Defensivo") {
           goles = randomInt(1, 4);
-        } else if (player.posicion.includes("Centro")) {
+          asistencias = randomInt(3, 7);
+          recuperaciones = randomInt(150, 220);
+          pasesComp = randomInt(1800, 2400);
+          pasesClave = randomInt(25, 45);
+          precPase = randomInt(86, 91);
+        } else if (player.posicion === "Centrocampista") {
           goles = randomInt(5, 9);
-        } else if (player.posicion.includes("Mediapunta")) {
+          asistencias = randomInt(8, 15);
+          pasesComp = randomInt(1900, 2600);
+          pasesClave = randomInt(50, 85);
+          precPase = randomInt(85, 90);
+        } else if (player.posicion === "Mediapunta") {
           goles = randomInt(8, 14);
+          asistencias = randomInt(10, 18);
+          pasesClave = randomInt(65, 105);
+          regates = randomInt(60, 100);
+          precPase = randomInt(81, 87);
+        } else if (player.posicion.includes("Extremo")) {
+          goles = randomInt(12, 20);
+          asistencias = randomInt(8, 14);
+          regates = randomInt(80, 130);
+          pasesClave = randomInt(40, 70);
         } else {
-          goles = randomInt(18, 28);
+          goles = randomInt(20, 32);
+          asistencias = randomInt(4, 9);
+          regates = randomInt(35, 70);
+          pasesClave = randomInt(25, 45);
         }
 
-        htmlRendimiento = `
-          <div class="cartel cartel-verde">
-            <div class="cartel-titular">📈 RENDIMIENTO SÓLIDO Y TITULARIDAD</div>
-            <div class="cartel-cuerpo">Regularidad competitiva y disciplina táctica. Eres un baluarte indiscutible del once titular.</div>
-            <div class="cartel-stats">
-              📊 Bloque de 2 años: ${partidos} partidos | ${goles} goles ${porteriasCero > 0 ? `| 🧤 ${porteriasCero} porterías a cero` : ''}<br>
-              📈 Progresión: <strong>+${subida} de media</strong> (Media actual: ${player.media})
-            </div>
-          </div>
-        `;
-
-        // Opciones moderadas de títulos
         if (randomInt(1, 100) <= 35) nuevosTitulos.push("Copa Doméstica");
         if (player.media >= 83 && randomInt(1, 100) <= 22) nuevosTitulos.push("Liga Nacional");
         if (esClubChampions && player.media >= 86 && randomInt(1, 100) <= 15) nuevosTitulos.push("UEFA Champions League");
         else if (esClubEuropaLeague && player.media >= 80 && randomInt(1, 100) <= 25) nuevosTitulos.push("UEFA Europa League");
 
       } else if (suerte >= 26) {
-        // Año correcto: mantienes o pierdes 1 si eres veterano
         subida = (player.numeroFicha <= 3) ? randomInt(0, 1) : ((player.numeroFicha <= 7) ? 0 : -1);
         aplicarDeltaMedia(subida);
-        partidos = randomInt(35, 48);
+        partidos = randomInt(36, 48);
+        textoNivel = "📋 ROTACIÓN Y TRABAJO GREMIAL";
+        claseCartel = "cartel-azul";
 
-        if (player.posicion === "Portero") {
-          goles = 0;
-          porteriasCero = randomInt(10, 18);
-          player.porteriasCeroTotales += porteriasCero;
-        } else if (player.posicion.includes("Defensa") || player.posicion.includes("Lateral")) {
-          goles = randomInt(0, 1);
-          porteriasCero = randomInt(8, 15);
-          player.porteriasCeroTotales += porteriasCero;
-        } else if (player.posicion.includes("Pivote")) {
+        if (esPortero) {
+          porteriasCero = randomInt(9, 15);
+          paradas = randomInt(80, 120);
+          pctParadas = randomInt(69, 74);
+          golesEncajados = randomInt(45, 60);
+        } else if (esDefensa) {
           goles = randomInt(0, 2);
-        } else if (player.posicion.includes("Centro")) {
-          goles = randomInt(3, 6);
-        } else if (player.posicion.includes("Mediapunta")) {
-          goles = randomInt(5, 9);
+          asistencias = player.posicion.includes("Lateral") ? randomInt(2, 5) : randomInt(0, 2);
+          porteriasCero = randomInt(8, 14);
+          recuperaciones = randomInt(80, 130);
+          pasesComp = randomInt(800, 1300);
+          precPase = randomInt(80, 85);
+        } else if (player.posicion === "Pivote Defensivo") {
+          goles = randomInt(0, 2);
+          asistencias = randomInt(1, 4);
+          recuperaciones = randomInt(90, 140);
+          pasesComp = randomInt(1100, 1600);
+          pasesClave = randomInt(15, 30);
+          precPase = randomInt(82, 87);
+        } else if (player.posicion === "Centrocampista") {
+          goles = randomInt(2, 5);
+          asistencias = randomInt(4, 8);
+          pasesComp = randomInt(1200, 1700);
+          pasesClave = randomInt(30, 50);
+          precPase = randomInt(81, 86);
+        } else if (player.posicion === "Mediapunta") {
+          goles = randomInt(4, 8);
+          asistencias = randomInt(5, 9);
+          pasesClave = randomInt(35, 60);
+          regates = randomInt(35, 65);
+          precPase = randomInt(77, 83);
+        } else if (player.posicion.includes("Extremo")) {
+          goles = randomInt(6, 12);
+          asistencias = randomInt(4, 8);
+          regates = randomInt(45, 80);
+          pasesClave = randomInt(20, 40);
         } else {
           goles = randomInt(10, 18);
+          asistencias = randomInt(2, 5);
+          regates = randomInt(20, 40);
+          pasesClave = randomInt(15, 25);
         }
-
-        htmlRendimiento = `
-          <div class="cartel cartel-azul">
-            <div class="cartel-titular">📋 ROTACIÓN Y TRABAJO GREMIAL</div>
-            <div class="cartel-cuerpo">Cumpliste tu rol dentro del plantel. Luces y sombras alternando apariciones estelares con descanso táctico.</div>
-            <div class="cartel-stats">
-              📊 Bloque de 2 años: ${partidos} partidos | ${goles} goles ${porteriasCero > 0 ? `| 🧤 ${porteriasCero} porterías a cero` : ''}<br>
-              📈 Progresión: <strong>${subida >= 0 ? '+' : ''}${subida} de media</strong> (Media actual: ${player.media})
-            </div>
-          </div>
-        `;
 
         if (randomInt(1, 100) <= 28) nuevosTitulos.push("Copa Doméstica");
 
       } else {
-        // Año difícil: bajón de rendimiento
         subida = (player.numeroFicha <= 3) ? -1 : ((player.numeroFicha <= 7) ? -2 : -3);
         aplicarDeltaMedia(subida);
         partidos = randomInt(10, 24);
+        textoNivel = "💥 OSTRACISMO Y BACHE FÍSICO";
+        claseCartel = "cartel-rojo";
 
-        if (player.posicion === "Portero" || player.posicion.includes("Defensa") || player.posicion.includes("Pivote")) {
-          goles = 0;
+        if (esPortero) {
           porteriasCero = randomInt(1, 5);
-          if (player.posicion === "Portero" || player.posicion.includes("Defensa")) {
-            player.porteriasCeroTotales += porteriasCero;
-          }
-        } else if (player.posicion.includes("Centro") || player.posicion.includes("Mediapunta")) {
+          paradas = randomInt(25, 55);
+          pctParadas = randomInt(62, 68);
+          golesEncajados = randomInt(20, 35);
+        } else if (esDefensa) {
+          goles = randomInt(0, 1);
+          asistencias = randomInt(0, 2);
+          porteriasCero = randomInt(2, 6);
+          recuperaciones = randomInt(25, 55);
+          pasesComp = randomInt(250, 550);
+          precPase = randomInt(75, 82);
+        } else if (player.posicion === "Pivote Defensivo") {
+          goles = 0;
+          asistencias = randomInt(0, 1);
+          recuperaciones = randomInt(30, 60);
+          pasesComp = randomInt(300, 650);
+          pasesClave = randomInt(4, 12);
+          precPase = randomInt(78, 83);
+        } else if (player.posicion === "Centrocampista") {
           goles = randomInt(0, 2);
+          asistencias = randomInt(1, 3);
+          pasesComp = randomInt(350, 700);
+          pasesClave = randomInt(8, 18);
+          precPase = randomInt(77, 82);
+        } else if (player.posicion === "Mediapunta") {
+          goles = randomInt(1, 3);
+          asistencias = randomInt(1, 4);
+          pasesClave = randomInt(10, 22);
+          regates = randomInt(10, 25);
+          precPase = randomInt(73, 79);
+        } else if (player.posicion.includes("Extremo")) {
+          goles = randomInt(1, 4);
+          asistencias = randomInt(1, 3);
+          regates = randomInt(15, 30);
+          pasesClave = randomInt(6, 15);
         } else {
-          goles = randomInt(1, 5);
+          goles = randomInt(2, 6);
+          asistencias = randomInt(0, 2);
+          regates = randomInt(8, 18);
+          pasesClave = randomInt(4, 10);
         }
 
-        htmlRendimiento = `
-          <div class="cartel cartel-rojo">
-            <div class="cartel-titular">💥 OSTRACISMO Y BACHE FÍSICO</div>
-            <div class="cartel-cuerpo">Pérdida de minutos, problemas musculares o falta de confianza te relegan al banquillo. Críticas en prensa.</div>
-            <div class="cartel-stats">
-              📊 Bloque de 2 años: ${partidos} partidos | ${goles} goles<br>
-              📉 Caída de media: <strong>${subida}</strong> (Media actual: ${player.media})
-            </div>
-          </div>
-        `;
-
-        // Piso de títulos: solo si tu club es de élite absoluta puedes rascar Copa
         if ((esClubChampions || esClubEuropaLeague) && randomInt(1, 100) <= 25) {
           nuevosTitulos.push(pickRandom(["Copa Doméstica", "Supercopa Nacional"]));
         }
       }
 
-      player.golesTotales += goles;
+      // Sumar acumulados generales
       player.partidosTotales += partidos;
+      player.golesTotales += goles;
+      player.asistenciasTotales += asistencias;
+      player.porteriasCeroTotales += porteriasCero;
+      player.pasesCompletadosTotales += pasesComp;
+      player.pasesClaveTotales += pasesClave;
+      player.regatesTotales += regates;
+      player.recuperacionesTotales += recuperaciones;
+      player.paradasTotales += paradas;
 
-      // Supercopas (Tier 5) y Mundial de Clubes (Tier 3)
+      // Generar bloque visual de estadísticas según rol
+      let metricasEspecificas = "";
+      if (esPortero) {
+        metricasEspecificas = `🧤 <strong>${porteriasCero}</strong> porterías a cero | 🧱 <strong>${paradas}</strong> paradas (${pctParadas}% de acierto) | ⚠️ <strong>${golesEncajados}</strong> goles encajados`;
+      } else if (esDefensa || player.posicion === "Pivote Defensivo") {
+        metricasEspecificas = `⚽ <strong>${goles}</strong> goles | 🅰️ <strong>${asistencias}</strong> asistencias | 🛡️ <strong>${recuperaciones}</strong> recuperaciones/entradas | 🎯 <strong>${pasesComp}</strong> pases (${precPase}%) | 🧤 <strong>${porteriasCero}</strong> porterías a cero`;
+      } else if (esMedio) {
+        metricasEspecificas = `⚽ <strong>${goles}</strong> goles | 🅰️ <strong>${asistencias}</strong> asistencias | 🎯 <strong>${pasesComp}</strong> pases completados (${precPase}%) | 🔑 <strong>${pasesClave}</strong> pases clave`;
+      } else { // Delanteros y Extremos
+        metricasEspecificas = `⚽ <strong>${goles}</strong> goles | 🅰️ <strong>${asistencias}</strong> asistencias | ⚡ <strong>${regates}</strong> regates completados | 🔑 <strong>${pasesClave}</strong> pases clave`;
+      }
+
+      htmlRendimiento = `
+        <div class="cartel ${claseCartel}">
+          <div class="cartel-titular">${textoNivel}</div>
+          <div class="cartel-cuerpo">Rendimiento e impacto directo en el juego del equipo a lo largo de este período bienal.</div>
+          <div class="cartel-stats">
+            📊 <strong>Partidos oficiales:</strong> ${partidos}<br>
+            📈 <strong>Estadísticas clave:</strong><br>${metricasEspecificas}<br>
+            ⭐ <strong>Evolución:</strong> ${subida >= 0 ? '+' : ''}${subida} de media (Media actual: <strong>${player.media}</strong>)
+          </div>
+        </div>
+      `;
+
       if (nuevosTitulos.includes("Liga Nacional") || nuevosTitulos.includes("Copa Doméstica")) {
         if (randomInt(1, 100) <= 50) nuevosTitulos.push("Supercopa Nacional");
       }
@@ -731,7 +785,6 @@
         if (randomInt(1, 100) <= 60) nuevosTitulos.push("Mundial de Clubes de la FIFA");
       }
 
-      // Momentos de clímax individual
       let htmlMomento = "";
       const azarMomento = randomInt(1, 100);
       if (esAtacante && goles >= 16 && azarMomento <= 25) {
@@ -748,7 +801,6 @@
         `;
       }
 
-      // Registro y presentación de títulos con sus etiquetas de Tier
       let htmlTitulos = "";
       if (nuevosTitulos.length > 0) {
         htmlTitulos = `
@@ -757,7 +809,7 @@
             ${nuevosTitulos.map(t => {
               player.titulosClub += 1;
               player.listaTitulos.push(`${t} (${player.club})`);
-              return `🥇 <strong>${t}</strong>${tagTierTitulo(t)}<br>`;
+              return `🥇 <strong>${t}</strong><br>`;
             }).join('')}
           </div>
         `;
@@ -765,18 +817,18 @@
         htmlTitulos = `<p><em>Este ciclo finaliza sin títulos oficiales en las vitrinas de ${player.club}.</em></p>`;
       }
 
-      // 3. SELECCIÓN NACIONAL SEGÚN EL TIER INTERNACIONAL
       const tInfo = obtenerTierPais(player.nacionalidad);
       let htmlSeleccion = "";
 
-      // Resurrección dramática (reducida en probabilidad y con subida más controlada de +3)
       if (suerte < 26 && player.edad >= 22 && player.edad <= 34 && randomInt(1, 100) <= tInfo.probRes) {
         aplicarDeltaMedia(3);
         player.titulosSeleccion += 1;
         player.listaTitulos.push(`🌍 Copa del Mundo / Mundial (${player.nacionalidad})`);
         player.partidosSeleccion += 7;
         const golesRes = esAtacante ? randomInt(5, 7) : randomInt(1, 2);
+        const asisRes = esAtacante ? randomInt(2, 4) : randomInt(0, 2);
         player.golesSeleccion += golesRes;
+        player.asistenciasSeleccion += asisRes;
 
         let botaMundialHtml = "";
         if (esAtacante && golesRes >= 6) {
@@ -787,10 +839,10 @@
 
         htmlSeleccion = `
           <div class="resurreccion-box">
-            <div style="color: #a5b4fc; font-weight: 800; font-size: 1.1rem; margin-bottom: 6px;">⚡ ¡¡LA MAYOR GESTA DE LA HISTORIA: HÉROE CON ${player.nacionalidad.toUpperCase()}!! ${tagTierTitulo('Mundial')}</div>
+            <div style="color: #a5b4fc; font-weight: 800; font-size: 1.1rem; margin-bottom: 6px;">⚡ ¡¡LA MAYOR GESTA DE LA HISTORIA: HÉROE CON ${player.nacionalidad.toUpperCase()}!!</div>
             <div style="font-size: 0.95rem; line-height: 1.6;">
-              <strong>Parecía que estabas totalmente acabado en tu club</strong> y la crítica pedía tu exclusión. En un giro dramático, el seleccionador confió en ti para el Mundial.<br><br>
-              ¡Y lideraste la mayor gesta conocida! Conquistaste la <strong>Copa del Mundo</strong> para tu país contra todo pronóstico.
+              <strong>Parecía que estabas acabado en tu club</strong> y la crítica pedía tu exclusión. En un giro dramático, el seleccionador confió en ti para el Mundial.<br><br>
+              ¡Y lideraste la mayor gesta conocida! Conquistaste la <strong>Copa del Mundo</strong> para tu país sumando ${golesRes} goles y ${asisRes} asistencias cruciales.
             </div>
             <div style="margin-top: 10px; background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 6px; color: #facc15; font-weight: bold;">
               🚀 ¡REVALORIZACIÓN ÉPICA! +3 de media por tu papel legendario (Media actual: ${player.media}).
@@ -801,27 +853,35 @@
       } else if (player.media >= tInfo.minMediaSel && suerte >= 32) {
         const partSel = randomInt(4, 10);
         let golSel = 0;
-        if (player.posicion === "Portero") golSel = 0;
-        else if (player.posicion.includes("Defensa") || player.posicion.includes("Pivote")) golSel = pickRandom([0, 0, 1]);
-        else if (player.posicion.includes("Centro")) golSel = randomInt(0, 2);
-        else golSel = randomInt(2, 5);
+        let asisSel = 0;
+        if (esPortero) {
+          golSel = 0; asisSel = 0;
+        } else if (esDefensa) {
+          golSel = pickRandom([0, 0, 1]);
+          asisSel = randomInt(0, 2);
+        } else if (esMedio) {
+          golSel = randomInt(0, 2);
+          asisSel = randomInt(1, 4);
+        } else {
+          golSel = randomInt(2, 5);
+          asisSel = randomInt(1, 3);
+        }
 
         player.partidosSeleccion += partSel;
         player.golesSeleccion += golSel;
+        player.asistenciasSeleccion += asisSel;
 
         let copasSel = "";
-        // Tier 2 Selección: Torneo Continental
         if (player.media >= tInfo.reqCont && randomInt(1, 100) <= tInfo.probCont) {
           player.titulosSeleccion += 1;
           player.listaTitulos.push(`🏆 Torneo Continental de Selecciones (${player.nacionalidad})`);
-          copasSel += `<div style="color: #facc15; margin-top: 6px; font-weight: bold;">⭐ ¡¡CAMPEÓN CONTINENTAL!! Levantaste el trofeo continental con ${player.nacionalidad} ${tagTierTitulo('Torneo Continental de Selecciones')}.</div>`;
+          copasSel += `<div style="color: #facc15; margin-top: 6px; font-weight: bold;">⭐ ¡¡CAMPEÓN CONTINENTAL!! Levantaste el trofeo continental con ${player.nacionalidad}.</div>`;
         }
 
-        // Tier 1 Selección: Copa del Mundo
         if (player.media >= tInfo.reqMun && randomInt(1, 100) <= tInfo.probMun) {
           player.titulosSeleccion += 1;
           player.listaTitulos.push(`🌍 Copa del Mundo / Mundial (${player.nacionalidad})`);
-          copasSel += `<div style="color: #facc15; margin-top: 6px; font-weight: bold;">🌍 ¡¡CAMPEÓN DEL MUNDO!! Conquistaste la Copa del Mundo con ${player.nacionalidad} ${tagTierTitulo('Mundial')}.</div>`;
+          copasSel += `<div style="color: #facc15; margin-top: 6px; font-weight: bold;">🌍 ¡¡CAMPEÓN DEL MUNDO!! Conquistaste la Copa del Mundo con ${player.nacionalidad}.</div>`;
           if (esAtacante && golSel >= 4 && randomInt(1, 100) <= 40) {
             player.pichichisMundial += 1;
             player.listaPremiosIndiv.push(`⚽ Bota de Oro del Mundial (${player.nacionalidad})`);
@@ -831,8 +891,7 @@
 
         htmlSeleccion = `
           <div class="seleccion-box">
-            🔵 <strong>Convocado con la Selección de ${player.nacionalidad}:</strong> Sumaste ${partSel} partidos y ${golSel} goles internacionales.<br>
-            <small style="color: #93c5fd;">(${tInfo.nombre})</small>
+            🔵 <strong>Convocado con la Selección de ${player.nacionalidad}:</strong> Sumaste ${partSel} partidos, ${golSel} goles y ${asisSel} asistencias internacionales.
             ${copasSel}
           </div>
         `;
@@ -840,7 +899,6 @@
         htmlSeleccion = `<p><em>No fuiste convocado con ${player.nacionalidad} durante este período.</em></p>`;
       }
 
-      // Galardones Individuales (Exigen rendimiento sobresaliente)
       let htmlPremios = "";
       let ganoBalonOro = false;
       let ganoBotaOro = false;
@@ -869,7 +927,6 @@
         }
       }
 
-      // Balón de Oro: exige al menos 88 de media y haber levantado títulos de prestigio
       if (suerte >= 85 && player.media >= 88 && nuevosTitulos.length > 0 && randomInt(1, 100) <= 40) {
         ganoBalonOro = true;
         player.balonesDeOro += 1;
@@ -975,7 +1032,7 @@
         } else if (azarDilema === 2) {
           htmlOpciones = `
             <div style="background: rgba(14, 165, 233, 0.15); border-left: 4px solid #0ea5e9; padding: 14px; margin: 15px 0;">
-              🏃‍♂️ <strong>EXIGENCIA TÁCTICA: PRESIÓN ASFIXIANTE Y REPLIEGUE JOVEN</strong><br>
+              🏃‍♂️️ <strong>EXIGENCIA TÁCTICA: PRESIÓN ASFIXIANTE Y REPLIEGUE JOVEN</strong><br>
               El míster te exige presionar la salida y vaciarte en defensa en cada jugada. Eres joven y tus pulmones aguantan todo.<br>
               <small style="color: #94a3b8;">(Juventud: 75% éxito +1 o +2 de media / 25% sobrecarga muscular y -1)</small>
             </div>
@@ -1163,7 +1220,8 @@
     function renderFin() {
       const totTitulos = player.titulosClub + player.titulosSeleccion;
       const esAtacante = (player.posicion.includes("Delantero") || player.posicion.includes("Extremo") || player.posicion.includes("Mediapunta"));
-      const tInfo = obtenerTierPais(player.nacionalidad);
+      const esDefensa = (player.posicion.includes("Defensa") || player.posicion.includes("Lateral") || player.posicion === "Pivote Defensivo");
+      const esPortero = (player.posicion === "Portero");
 
       let veredicto = "";
       if (player.balonesDeOro >= 2) {
@@ -1182,12 +1240,15 @@
 
         <div style="background: #1e293b; padding: 20px; border-radius: 8px; margin: 20px 0; line-height: 1.8;">
           <p>• <strong>Nombre:</strong> ${player.nombre} (#${player.dorsal})</p>
-          <p>• <strong>Nacionalidad:</strong> ${player.nacionalidad} <span class="tag-tier">${tInfo.nombre}</span></p>
+          <p>• <strong>Nacionalidad:</strong> ${player.nacionalidad}</p>
           <p>• <strong>Posición:</strong> ${player.posicion} | <strong>Pierna:</strong> ${player.pieHabil}</p>
           <p>• <strong>Media final de retirada:</strong> ${player.media} / 99</p>
-          <p>• <strong>Partidos oficiales en clubes:</strong> ${player.partidosTotales} | <strong>Goles:</strong> ${player.golesTotales}</p>
-          ${(player.posicion === "Portero" || player.posicion.includes("Defensa")) ? `<p>• <strong>Porterías a cero acumuladas:</strong> ${player.porteriasCeroTotales}</p>` : ''}
-          <p>• <strong>Internacional con ${player.nacionalidad}:</strong> ${player.partidosSeleccion} partidos (${player.golesSeleccion} goles)</p>
+          <p>• <strong>Partidos oficiales en clubes:</strong> ${player.partidosTotales}</p>
+          <p>• <strong>Producción ofensiva de club:</strong> ⚽ ${player.golesTotales} goles | 🅰️ ${player.asistenciasTotales} asistencias</p>
+          ${esPortero ? `<p>• <strong>Muro bajo palos:</strong> 🧤 ${player.porteriasCeroTotales} porterías a cero | 🧱 ${player.paradasTotales} paradas totales</p>` : ''}
+          ${esDefensa ? `<p>• <strong>Rendimiento defensivo:</strong> 🛡️ ${player.recuperacionesTotales} recuperaciones/entradas \vert{} 🧤 ${player.porteriasCeroTotales} porterías a cero</p>` : ''}
+          ${(!esPortero && !esDefensa) ? `<p>• <strong>Creación y desborde:</strong> 🔑 ${player.pasesClaveTotales} pases clave | ⚡ ${player.regatesTotales} regates \vert{} 🎯 ${player.pasesCompletadosTotales} pases completados</p>` : ''}
+          <p>• <strong>Internacional con ${player.nacionalidad}:</strong> ${player.partidosSeleccion} partidos (${player.golesSeleccion} goles, ${player.asistenciasSeleccion} asistencias)</p>
           <p>• <strong>Total de Títulos Colectivos:</strong> ${totTitulos} (Club: ${player.titulosClub} | Selección: ${player.titulosSeleccion})</p>
           <p>• <strong>Distinciones individuales:</strong> 🟡 ${player.balonesDeOro} Balones de Oro | 👟 ${player.botasDeOro} Botas de Oro | 🧤 ${player.guantesDeOro} Guantes de Oro | ⭐ ${player.vecesOnceIdeal} Once Ideal FIFPRO</p>
           ${esAtacante ? `<p>• <strong>Trofeos de Máximo Goleador:</strong> ⚽ ${player.pichichisLiga} Pichichis de Liga | ⚽ ${player.pichichisChampions} Goleador de Champions \vert{} ⚽${player.pichichisMundial} Botas de Oro en Mundiales</p>` : ''}
@@ -1195,7 +1256,7 @@
 
         <h3>🏅 Vitrina de Títulos Colectivos:</h3>
         <div style="margin: 10px 0;">
-          ${player.listaTitulos.length ? player.listaTitulos.map(t => `<p>• ${t}${tagTierTitulo(t)}</p>`).join('') : '<p><em>No lograste levantar ningún título colectivo en tu carrera.</em></p>'}
+          ${player.listaTitulos.length ? player.listaTitulos.map(t => `<p>• ${t}</p>`).join('') : '<p><em>No lograste levantar ningún título colectivo en tu carrera.</em></p>'}
         </div>
 
         <hr>
@@ -1212,7 +1273,6 @@
       `;
     }
 
-    // Iniciar juego
     renderStart();
   </script>
 </body>

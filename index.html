@@ -154,7 +154,18 @@
       color: #e9d5ff;
       border-radius: 8px;
       padding: 12px 16px;
-      margin: 14px 0;
+      margin: 10px 0;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .cartel-fisico {
+      background: rgba(14, 165, 233, 0.15);
+      border-left: 5px solid #0ea5e9;
+      color: #bae6fd;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 10px 0;
       line-height: 1.5;
       font-size: 0.95rem;
     }
@@ -338,7 +349,9 @@
       pichichisLiga: 0,
       pichichisChampions: 0,
       pichichisMundial: 0,
-      listaPremiosIndiv: []
+      listaPremiosIndiv: [],
+      ultimoEstadoMental: 0,
+      ultimoEstadoFisico: 0
     };
 
     function randomInt(min, max) {
@@ -584,11 +597,19 @@
           pasesClave = randomInt(40, 70);
         }
 
-        // Ligas más accesibles (60%), Champions (36%) y Europa League (45%) más exigentes que la liga
-        if (player.media >= 80 && randomInt(1, 100) <= 60) nuevosTitulos.push("Liga Nacional");
+        // Ligas calibradas por jerarquía del club
+        if (esClubChampions) {
+          if (player.media >= 74 && randomInt(1, 100) <= 72) nuevosTitulos.push("Liga Nacional");
+        } else if (esClubEuropaLeague) {
+          if (player.media >= 78 && randomInt(1, 100) <= 45) nuevosTitulos.push("Liga Nacional");
+        } else {
+          if (player.media >= 81 && randomInt(1, 100) <= 22) nuevosTitulos.push("Liga Nacional");
+        }
+
         if (randomInt(1, 100) <= 52) nuevosTitulos.push("Copa Doméstica");
+        // Torneos internacionales de clubes más exigentes que la liga
         if (esClubChampions && player.media >= 84 && randomInt(1, 100) <= 36) nuevosTitulos.push("UEFA Champions League");
-        else if (esClubEuropaLeague && player.media >= 78 && randomInt(1, 100) <= 45) nuevosTitulos.push("UEFA Europa League");
+        else if (esClubEuropaLeague && player.media >= 78 && randomInt(1, 100) <= 42) nuevosTitulos.push("UEFA Europa League");
 
       } else if (suerte >= 52) {
         subida = (player.numeroFicha <= 3) ? randomInt(1, 3) : ((player.numeroFicha <= 7) ? randomInt(0, 1) : 0);
@@ -641,10 +662,16 @@
         }
 
         if (randomInt(1, 100) <= 38) nuevosTitulos.push("Copa Doméstica");
-        // Liga más accesible (35%), Champions (20%) y Europa League (30%) más difíciles que la liga
-        if (player.media >= 82 && randomInt(1, 100) <= 35) nuevosTitulos.push("Liga Nacional");
+        if (esClubChampions) {
+          if (player.media >= 75 && randomInt(1, 100) <= 48) nuevosTitulos.push("Liga Nacional");
+        } else if (esClubEuropaLeague) {
+          if (player.media >= 80 && randomInt(1, 100) <= 26) nuevosTitulos.push("Liga Nacional");
+        } else {
+          if (player.media >= 83 && randomInt(1, 100) <= 12) nuevosTitulos.push("Liga Nacional");
+        }
+
         if (esClubChampions && player.media >= 85 && randomInt(1, 100) <= 20) nuevosTitulos.push("UEFA Champions League");
-        else if (esClubEuropaLeague && player.media >= 79 && randomInt(1, 100) <= 30) nuevosTitulos.push("UEFA Europa League");
+        else if (esClubEuropaLeague && player.media >= 79 && randomInt(1, 100) <= 28) nuevosTitulos.push("UEFA Europa League");
 
       } else if (suerte >= 26) {
         subida = (player.numeroFicha <= 3) ? randomInt(0, 1) : ((player.numeroFicha <= 7) ? 0 : -1);
@@ -697,7 +724,9 @@
         }
 
         if (randomInt(1, 100) <= 28) nuevosTitulos.push("Copa Doméstica");
-        if (player.media >= 85 && randomInt(1, 100) <= 15) nuevosTitulos.push("Liga Nacional");
+        if (esClubChampions && player.media >= 76 && randomInt(1, 100) <= 24) {
+          nuevosTitulos.push("Liga Nacional");
+        }
 
       } else {
         subida = (player.numeroFicha <= 3) ? -1 : ((player.numeroFicha <= 7) ? -2 : -3);
@@ -757,7 +786,7 @@
       // Sistema de Salud Mental y Estado Anímico
       let deltaMoral = 0;
       let motivoMoral = "";
-      const eventosPositivos = [
+      const eventosPositivosMoral = [
         {
           txt: "Juegas prácticamente todos los minutos como indiscutible en el once titular; la confianza ciega del cuerpo técnico catapulta tu motivación.",
           delta: 1
@@ -772,7 +801,7 @@
         }
       ];
 
-      const eventosNegativos = [
+      const eventosNegativosMoral = [
         {
           txt: "Una racha de derrotas provoca que parte del estadio y las redes sociales te señalen con insultos y pitos; el desgaste psicológico mina tu confianza.",
           delta: -1
@@ -790,7 +819,7 @@
       const azarMental = randomInt(1, 100);
       if (suerte >= 82) {
         if (azarMental <= 80) {
-          const ev = pickRandom(eventosPositivos);
+          const ev = pickRandom(eventosPositivosMoral);
           deltaMoral = ev.delta;
           motivoMoral = ev.txt;
         } else {
@@ -798,11 +827,11 @@
         }
       } else if (suerte >= 52) {
         if (azarMental <= 50) {
-          const ev = pickRandom(eventosPositivos);
+          const ev = pickRandom(eventosPositivosMoral);
           deltaMoral = ev.delta;
           motivoMoral = ev.txt;
         } else if (azarMental >= 80) {
-          const ev = pickRandom(eventosNegativos);
+          const ev = pickRandom(eventosNegativosMoral);
           deltaMoral = ev.delta;
           motivoMoral = ev.txt;
         } else {
@@ -810,7 +839,7 @@
         }
       } else if (suerte >= 26) {
         if (azarMental <= 45) {
-          const ev = pickRandom(eventosNegativos);
+          const ev = pickRandom(eventosNegativosMoral);
           deltaMoral = ev.delta;
           motivoMoral = ev.txt;
         } else if (azarMental >= 80) {
@@ -821,7 +850,7 @@
         }
       } else {
         if (azarMental <= 80) {
-          const ev = pickRandom(eventosNegativos);
+          const ev = pickRandom(eventosNegativosMoral);
           deltaMoral = ev.delta;
           motivoMoral = ev.txt;
         } else {
@@ -832,13 +861,101 @@
       if (deltaMoral !== 0) {
         aplicarDeltaMedia(deltaMoral);
       }
+      player.ultimoEstadoMental = deltaMoral;
+
+      // Sistema de Estado Físico y Biomecánico
+      let deltaFisico = 0;
+      let motivoFisico = "";
+      const eventosFisicosPositivos = [
+        {
+          txt: "Tu tren inferior responde con una potencia y elasticidad envidiable; el trabajo de gimnasio te hace ganar todos los duelos cuerpo a cuerpo.",
+          delta: 1
+        },
+        {
+          txt: "Régimen biomecánico impecable: encadenas 24 meses sin una sola molestia muscular y recuperas energías en tiempo récord.",
+          delta: 1
+        },
+        {
+          txt: "Pico de velocidad punta y resistencia cardiovascular; devoras kilómetros sin bajar la intensidad en los últimos 15 minutos.",
+          delta: 1
+        }
+      ];
+
+      const eventosFisicosNegativos = [
+        {
+          txt: "Una sobrecarga recurrente en el isquiotibial y molestias articulares te obligan a jugar infiltrado varias semanas.",
+          delta: -1
+        },
+        {
+          txt: "El calendario asfixiante te pasa factura; sufres fatiga crónica y pesadez en las piernas durante la fase decisiva de la temporada.",
+          delta: -1
+        },
+        {
+          txt: "Un esguince mal curado frena tu arrancada explosiva y te resta confianza al disputar balones divididos.",
+          delta: -1
+        }
+      ];
+
+      const azarFisico = randomInt(1, 100);
+      if (suerte >= 82) {
+        if (azarFisico <= 75) {
+          const ef = pickRandom(eventosFisicosPositivos);
+          deltaFisico = ef.delta;
+          motivoFisico = ef.txt;
+        } else {
+          motivoFisico = "Tu organismo asimila la alta carga de partidos con tono muscular óptimo.";
+        }
+      } else if (suerte >= 52) {
+        if (azarFisico <= 40) {
+          const ef = pickRandom(eventosFisicosPositivos);
+          deltaFisico = ef.delta;
+          motivoFisico = ef.txt;
+        } else if (azarFisico >= 78) {
+          const ef = pickRandom(eventosFisicosNegativos);
+          deltaFisico = ef.delta;
+          motivoFisico = ef.txt;
+        } else {
+          motivoFisico = "Respuesta física estándar y controlada sin lesiones de consideración.";
+        }
+      } else if (suerte >= 26) {
+        if (azarFisico <= 50) {
+          const ef = pickRandom(eventosFisicosNegativos);
+          deltaFisico = ef.delta;
+          motivoFisico = ef.txt;
+        } else {
+          motivoFisico = "Ritmo físico algo intermitente debido a la falta de continuidad sobre el terreno de juego.";
+        }
+      } else {
+        if (azarFisico <= 75) {
+          const ef = pickRandom(eventosFisicosNegativos);
+          deltaFisico = ef.delta;
+          motivoFisico = ef.txt;
+        } else {
+          motivoFisico = "Logras evitar lesiones graves a pesar del evidente bajón de ritmo de juego.";
+        }
+      }
+
+      if (deltaFisico !== 0) {
+        aplicarDeltaMedia(deltaFisico);
+      }
+      player.ultimoEstadoFisico = deltaFisico;
 
       const htmlSaludMental = `
         <div class="cartel-moral">
           <strong>🧠 INFORME PSICOLÓGICO Y SALUD MENTAL:</strong><br>
           ${motivoMoral}
-          <div style="margin-top: 8px; font-weight: bold; font-size: 0.9rem;">
-            Impacto anímico en tu juego: ${deltaMoral > 0 ? `<span style="color: #4ade80;">+${deltaMoral} de media (Subidón de confianza)</span>` : (deltaMoral < 0 ? `<span style="color: #f87171;">${deltaMoral} de media (Bajón anímico)</span>` : `<span style="color: #94a3b8;">Sin variaciones en tu media</span>`)} (Media actual: <strong>${player.media}</strong>)
+          <div style="margin-top: 6px; font-weight: bold; font-size: 0.9rem;">
+            Impacto anímico: ${deltaMoral > 0 ? `<span style="color: #4ade80;">+${deltaMoral} de media (Subidón de confianza)</span>` : (deltaMoral < 0 ? `<span style="color: #f87171;">${deltaMoral} de media (Bajón anímico)</span>` : `<span style="color: #94a3b8;">Sin variaciones anímicas</span>`)}
+          </div>
+        </div>
+      `;
+
+      const htmlEstadoFisico = `
+        <div class="cartel-fisico">
+          <strong>⚡ INFORME BIOMÉDICO Y ESTADO FÍSICO:</strong><br>
+          ${motivoFisico}
+          <div style="margin-top: 6px; font-weight: bold; font-size: 0.9rem;">
+            Impacto físico: ${deltaFisico > 0 ? `<span style="color: #4ade80;">+${deltaFisico} de media (Pletórico físicamente)</span>` : (deltaFisico < 0 ? `<span style="color: #f87171;">${deltaFisico} de media (Merma física)</span>` : `<span style="color: #94a3b8;">Físico equilibrado</span>`)} | Media resultante: <strong>${player.media}</strong>
           </div>
         </div>
       `;
@@ -854,7 +971,6 @@
       player.recuperacionesTotales += recuperaciones;
       player.paradasTotales += paradas;
 
-      // Generar bloque visual de estadísticas según rol
       let metricasEspecificas = "";
       if (esPortero) {
         metricasEspecificas = `🧤 <strong>${porteriasCero}</strong> porterías a cero | 🧱 <strong>${paradas}</strong> paradas (${pctParadas}% de acierto) | ⚠️ <strong>${golesEncajados}</strong> goles encajados`;
@@ -873,7 +989,7 @@
           <div class="cartel-stats">
             📊 <strong>Partidos oficiales:</strong> ${partidos}<br>
             📈 <strong>Estadísticas clave:</strong><br>${metricasEspecificas}<br>
-            ⭐ <strong>Evolución deportiva:</strong> ${subida >= 0 ? '+' : ''}${subida} de media (Media deportiva: <strong>${player.media}</strong>)
+            ⭐ <strong>Evolución deportiva en el césped:</strong> ${subida >= 0 ? '+' : ''}${subida} de media
           </div>
         </div>
       `;
@@ -1084,6 +1200,7 @@
 
         ${htmlRendimiento}
         ${htmlSaludMental}
+        ${htmlEstadoFisico}
         ${htmlMomento}
 
         <hr>
@@ -1107,7 +1224,6 @@
     function renderDespacho() {
       let htmlOpciones = "";
 
-      // Pool de Guerras de Clubes
       const guerrasClubes = [
         {
           titulo: "🇮🇹 ¡GUERRA EN LA SERIE A ITALIANA!",
@@ -1174,12 +1290,70 @@
         `;
       }
 
-      if (player.numeroFicha === 1) {
+      // Reacción del despacho al estado mental y físico acumulado
+      let htmlCondicionEspecial = "";
+      const m = player.ultimoEstadoMental;
+      const f = player.ultimoEstadoFisico;
+
+      if (m < 0 && f < 0) {
+        // Crisis total (física y mental)
+        const clubEscape = pickRandom(clubesEuropaBajos);
+        htmlCondicionEspecial = `
+          <div style="background: rgba(239, 68, 68, 0.2); border-left: 4px solid #ef4444; padding: 12px 14px; margin: 14px 0; border-radius: 6px;">
+            ⚠️️ <strong>CRISIS INTEGRAL: AGOTAMIENTO FÍSICO Y PSICOLÓGICO</strong><br>
+            El ambiente en <strong>${player.club}</strong> se ha vuelto irrespirable y tu cuerpo no responde. El club y tu agente acuerdan que un cambio de aires es vital.
+          </div>
+          <div class="lista-opciones">
+            <button class="btn-opcion" onclick="ejecutarDecision({club: '${clubEscape}', mediaDelta: 1})">Pedir el traspaso inmediato al <strong>${clubEscape}</strong> (Cambiar de aires y recuperar la paz: +1 de media)</button>
+            <button class="btn-opcion" onclick="ejecutarDecision({mediaDelta: -1})">Forzar tu continuidad en <strong>${player.club}</strong> a contracorriente (-1 de media por desgaste)</button>
+          </div>
+        `;
+      } else if (m < 0 && f >= 0) {
+        // Físico intacto pero mente quemada con el club/afición
+        const clubNuevo = pickRandom(clubesEuropaMedios);
+        htmlCondicionEspecial = `
+          <div style="background: rgba(168, 85, 247, 0.2); border-left: 4px solid #a855f7; padding: 12px 14px; margin: 14px 0; border-radius: 6px;">
+            🧠 <strong>RUPTURA ANÍMICA CON EL CLUB</strong><br>
+            Físicamente estás entero, pero las críticas o la suplencia han roto tu relación con el cuerpo técnico de <strong>${player.club}</strong>.
+          </div>
+          <div class="lista-opciones">
+            <button class="btn-opcion" onclick="ejecutarDecision({club: '${clubNuevo}'})">Solicitar el transfer request y mudarte al <strong>${clubNuevo}</strong></button>
+            <button class="btn-opcion" onclick="ejecutarDecision({})">Ignorar el ruido, hacer terapia deportiva y pelear el puesto en <strong>${player.club}</strong></button>
+          </div>
+        `;
+      } else if (m >= 0 && f < 0) {
+        // Mente fuerte pero físico castigado
+        htmlCondicionEspecial = `
+          <div style="background: rgba(14, 165, 233, 0.2); border-left: 4px solid #0ea5e9; padding: 12px 14px; margin: 14px 0; border-radius: 6px;">
+            ⚡ <strong>ALARMA MÉDICA Y EXIGENCIA COMPETITIVA</strong><br>
+            Amas estar en <strong>${player.club}</strong>, pero el cuerpo médico advierte que la exigencia de este club está destrozando tus articulaciones.
+          </div>
+          <div class="lista-opciones">
+            <button class="btn-opcion" onclick="ejecutarDecision({mediaDelta: 1})">Pactar un plan de descansos con el club y renovar (+1 de media)</button>
+            <button class="btn-opcion" onclick="ejecutarDecision({club: '${pickRandom(clubesEuropaBajos)}'})">Buscar una liga menos exigente físicamente para alargar tu carrera</button>
+          </div>
+        `;
+      } else if (m > 0 && f > 0 && player.numeroFicha > 2) {
+        // Plenitud total
+        htmlCondicionEspecial = `
+          <div style="background: rgba(34, 197, 94, 0.2); border-left: 4px solid #22c55e; padding: 12px 14px; margin: 14px 0; border-radius: 6px;">
+            ✨ <strong>ESTADO DE GRACIA: ARMONÍA MENTAL Y FÍSICA</strong><br>
+            Estás en el momento más dulce de tu vida deportiva. En <strong>${player.club}</strong> te ofrecen un contrato vitalicio como referente absoluto.
+          </div>
+          <div class="lista-opciones">
+            <button class="btn-opcion" onclick="ejecutarDecision({mediaDelta: 1})">Firmar la renovación dorada y blindarte en <strong>${player.club}</strong> (+1 de media)</button>
+          </div>
+        `;
+      }
+
+      if (htmlCondicionEspecial !== "" && randomInt(1, 100) <= 65) {
+        htmlOpciones = htmlCondicionEspecial;
+      } else if (player.numeroFicha === 1) {
         const offA = pickRandom(clubesEuropaMedios);
         const offB = pickRandom(clubesEuropaBajos);
         htmlOpciones = `
           <div style="background: rgba(56, 189, 248, 0.15); border-left: 4px solid #38bdf8; padding: 14px; margin: 15px 0;">
-            ✈ <strong>Tu ciclo en la academia ha terminado.</strong> Dos clubes europeos presentan ofertas formales.
+            ✈️ <strong>Tu ciclo en la academia ha terminado.</strong> Dos clubes europeos presentan ofertas formales.
           </div>
           <div class="lista-opciones">
             <button class="btn-opcion" onclick="ejecutarDecision({club: '${offA}'})">Firmar por el <strong>${offA}</strong> (Club de alta exigencia y noches europeas)</button>
@@ -1194,7 +1368,7 @@
         } else if (azarDilema === 2) {
           htmlOpciones = `
             <div style="background: rgba(14, 165, 233, 0.15); border-left: 4px solid #0ea5e9; padding: 14px; margin: 15px 0;">
-              🏃‍♂ <strong>EXIGENCIA TÁCTICA: PRESIÓN ASFIXIANTE Y REPLIEGUE JOVEN</strong><br>
+              🏃‍♂️ <strong>EXIGENCIA TÁCTICA: PRESIÓN ASFIXIANTE Y REPLIEGUE JOVEN</strong><br>
               El míster te exige presionar la salida y vaciarte en defensa en cada jugada. Eres joven y tus pulmones aguantan todo.<br>
               <small style="color: #94a3b8;">(Juventud: 75% éxito +1 o +2 de media / 25% sobrecarga muscular y -1)</small>
             </div>
@@ -1238,7 +1412,7 @@
         } else if (azarPrime === 3) {
           htmlOpciones = `
             <div style="background: rgba(245, 158, 11, 0.15); border-left: 4px solid #f59e0b; padding: 14px; margin: 15px 0;">
-              ⚔ <strong>EL JUGADOR TOTAL: PRESIÓN EN PLENO PRIME</strong><br>
+              ⚔️ <strong>EL JUGADOR TOTAL: PRESIÓN EN PLENO PRIME</strong><br>
               El míster te pide liderar la presión arriba sin perder pólvora en ataque.<br>
               <small style="color: #94a3b8;">(Prime: 65% consagrarte como jugador total +1 / 35% llegar fundido a final de curso -1)</small>
             </div>
@@ -1388,7 +1562,7 @@
           <p>• <strong>Posición:</strong> ${player.posicion} | <strong>Pierna:</strong> ${player.pieHabil}</p>
           <p>• <strong>Media final de retirada:</strong> ${player.media} / 99</p>
           <p>• <strong>Partidos oficiales en clubes:</strong> ${player.partidosTotales}</p>
-          <p>• <strong>Producción ofensiva de club:</strong> ⚽ ${player.golesTotales} goles | 🅰️️ ${player.asistenciasTotales} asistencias</p>
+          <p>• <strong>Producción ofensiva de club:</strong> ⚽ ${player.golesTotales} goles | 🅰️ ${player.asistenciasTotales} asistencias</p>
           ${esPortero ? `<p>• <strong>Muro bajo palos:</strong> 🧤 ${player.porteriasCeroTotales} porterías a cero | 🧱 ${player.paradasTotales} paradas totales</p>` : ''}
           ${esDefensa ? `<p>• <strong>Rendimiento defensivo:</strong> 🛡️ ${player.recuperacionesTotales} recuperaciones/entradas \vert{} 🧤 ${player.porteriasCeroTotales} porterías a cero</p>` : ''}
           ${(!esPortero && !esDefensa) ? `<p>• <strong>Creación y desborde:</strong> 🔑 ${player.pasesClaveTotales} pases clave | ⚡ ${player.regatesTotales} regates \vert{} 🎯 ${player.pasesCompletadosTotales} pases completados</p>` : ''}

@@ -148,6 +148,17 @@
       color: #fecaca;
     }
 
+    .cartel-moral {
+      background: rgba(168, 85, 247, 0.15);
+      border-left: 5px solid #a855f7;
+      color: #e9d5ff;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 14px 0;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
     .lista-opciones {
       display: flex;
       flex-direction: column;
@@ -566,17 +577,18 @@
           asistencias = randomInt(16, 26);
           regates = randomInt(140, 210);
           pasesClave = randomInt(70, 110);
-        } else { // Delantero Centro
+        } else {
           goles = randomInt(36, 52);
           asistencias = randomInt(8, 16);
           regates = randomInt(60, 110);
           pasesClave = randomInt(40, 70);
         }
 
-        if (player.media >= 81 && randomInt(1, 100) <= 45) nuevosTitulos.push("Liga Nacional");
-        if (randomInt(1, 100) <= 50) nuevosTitulos.push("Copa Doméstica");
-        if (esClubChampions && player.media >= 84 && randomInt(1, 100) <= 28) nuevosTitulos.push("UEFA Champions League");
-        else if (esClubEuropaLeague && player.media >= 78 && randomInt(1, 100) <= 40) nuevosTitulos.push("UEFA Europa League");
+        // Ligas más accesibles (60%), Champions (36%) y Europa League (45%) más exigentes que la liga
+        if (player.media >= 80 && randomInt(1, 100) <= 60) nuevosTitulos.push("Liga Nacional");
+        if (randomInt(1, 100) <= 52) nuevosTitulos.push("Copa Doméstica");
+        if (esClubChampions && player.media >= 84 && randomInt(1, 100) <= 36) nuevosTitulos.push("UEFA Champions League");
+        else if (esClubEuropaLeague && player.media >= 78 && randomInt(1, 100) <= 45) nuevosTitulos.push("UEFA Europa League");
 
       } else if (suerte >= 52) {
         subida = (player.numeroFicha <= 3) ? randomInt(1, 3) : ((player.numeroFicha <= 7) ? randomInt(0, 1) : 0);
@@ -628,10 +640,11 @@
           pasesClave = randomInt(25, 45);
         }
 
-        if (randomInt(1, 100) <= 35) nuevosTitulos.push("Copa Doméstica");
-        if (player.media >= 83 && randomInt(1, 100) <= 22) nuevosTitulos.push("Liga Nacional");
-        if (esClubChampions && player.media >= 86 && randomInt(1, 100) <= 15) nuevosTitulos.push("UEFA Champions League");
-        else if (esClubEuropaLeague && player.media >= 80 && randomInt(1, 100) <= 25) nuevosTitulos.push("UEFA Europa League");
+        if (randomInt(1, 100) <= 38) nuevosTitulos.push("Copa Doméstica");
+        // Liga más accesible (35%), Champions (20%) y Europa League (30%) más difíciles que la liga
+        if (player.media >= 82 && randomInt(1, 100) <= 35) nuevosTitulos.push("Liga Nacional");
+        if (esClubChampions && player.media >= 85 && randomInt(1, 100) <= 20) nuevosTitulos.push("UEFA Champions League");
+        else if (esClubEuropaLeague && player.media >= 79 && randomInt(1, 100) <= 30) nuevosTitulos.push("UEFA Europa League");
 
       } else if (suerte >= 26) {
         subida = (player.numeroFicha <= 3) ? randomInt(0, 1) : ((player.numeroFicha <= 7) ? 0 : -1);
@@ -684,6 +697,7 @@
         }
 
         if (randomInt(1, 100) <= 28) nuevosTitulos.push("Copa Doméstica");
+        if (player.media >= 85 && randomInt(1, 100) <= 15) nuevosTitulos.push("Liga Nacional");
 
       } else {
         subida = (player.numeroFicha <= 3) ? -1 : ((player.numeroFicha <= 7) ? -2 : -3);
@@ -740,6 +754,95 @@
         }
       }
 
+      // Sistema de Salud Mental y Estado Anímico
+      let deltaMoral = 0;
+      let motivoMoral = "";
+      const eventosPositivos = [
+        {
+          txt: "Juegas prácticamente todos los minutos como indiscutible en el once titular; la confianza ciega del cuerpo técnico catapulta tu motivación.",
+          delta: 1
+        },
+        {
+          txt: "La grada corea tu nombre en cada partido y eres el ídolo unánime de la afición local; tu autoestima y concentración están por las nubes.",
+          delta: 1
+        },
+        {
+          txt: "El vestuario te nombra líder y referente emocional; sientes que el equipo juega con total armonía a tu alrededor.",
+          delta: 1
+        }
+      ];
+
+      const eventosNegativos = [
+        {
+          txt: "Una racha de derrotas provoca que parte del estadio y las redes sociales te señalen con insultos y pitos; el desgaste psicológico mina tu confianza.",
+          delta: -1
+        },
+        {
+          txt: "El míster te relega a un rol secundario de forma injusta; pasar semanas en el banquillo viendo los partidos sin calentar te genera una profunda frustración.",
+          delta: -1
+        },
+        {
+          txt: "Campañas mediáticas muy agresivas de la prensa deportiva y presiones desmedidas fuera del campo te provocan ansiedad competitiva.",
+          delta: -1
+        }
+      ];
+
+      const azarMental = randomInt(1, 100);
+      if (suerte >= 82) {
+        if (azarMental <= 80) {
+          const ev = pickRandom(eventosPositivos);
+          deltaMoral = ev.delta;
+          motivoMoral = ev.txt;
+        } else {
+          motivoMoral = "Mantienes una mente fría y profesional frente a las exigencias, asimilando la gloria con serenidad.";
+        }
+      } else if (suerte >= 52) {
+        if (azarMental <= 50) {
+          const ev = pickRandom(eventosPositivos);
+          deltaMoral = ev.delta;
+          motivoMoral = ev.txt;
+        } else if (azarMental >= 80) {
+          const ev = pickRandom(eventosNegativos);
+          deltaMoral = ev.delta;
+          motivoMoral = ev.txt;
+        } else {
+          motivoMoral = "La regularidad competitiva mantiene tu estabilidad anímica y equilibrio mental sin grandes sobresaltos.";
+        }
+      } else if (suerte >= 26) {
+        if (azarMental <= 45) {
+          const ev = pickRandom(eventosNegativos);
+          deltaMoral = ev.delta;
+          motivoMoral = ev.txt;
+        } else if (azarMental >= 80) {
+          deltaMoral = 1;
+          motivoMoral = "A pesar de la rotación constante, respondes con carácter de hierro y te ganas el respeto de tus compañeros en los entrenamientos.";
+        } else {
+          motivoMoral = "Asumes tu papel en el equipo con disciplina espartana, esperando con paciencia cada oportunidad.";
+        }
+      } else {
+        if (azarMental <= 80) {
+          const ev = pickRandom(eventosNegativos);
+          deltaMoral = ev.delta;
+          motivoMoral = ev.txt;
+        } else {
+          motivoMoral = "La falta de minutos te aísla deportivamente, pero logras refugiarte en tu entorno personal sin hundirte.";
+        }
+      }
+
+      if (deltaMoral !== 0) {
+        aplicarDeltaMedia(deltaMoral);
+      }
+
+      const htmlSaludMental = `
+        <div class="cartel-moral">
+          <strong>🧠 INFORME PSICOLÓGICO Y SALUD MENTAL:</strong><br>
+          ${motivoMoral}
+          <div style="margin-top: 8px; font-weight: bold; font-size: 0.9rem;">
+            Impacto anímico en tu juego: ${deltaMoral > 0 ? `<span style="color: #4ade80;">+${deltaMoral} de media (Subidón de confianza)</span>` : (deltaMoral < 0 ? `<span style="color: #f87171;">${deltaMoral} de media (Bajón anímico)</span>` : `<span style="color: #94a3b8;">Sin variaciones en tu media</span>`)} (Media actual: <strong>${player.media}</strong>)
+          </div>
+        </div>
+      `;
+
       // Sumar acumulados generales
       player.partidosTotales += partidos;
       player.golesTotales += goles;
@@ -759,7 +862,7 @@
         metricasEspecificas = `⚽ <strong>${goles}</strong> goles | 🅰️ <strong>${asistencias}</strong> asistencias | 🛡️ <strong>${recuperaciones}</strong> recuperaciones/entradas | 🎯 <strong>${pasesComp}</strong> pases (${precPase}%) | 🧤 <strong>${porteriasCero}</strong> porterías a cero`;
       } else if (esMedio) {
         metricasEspecificas = `⚽ <strong>${goles}</strong> goles | 🅰️ <strong>${asistencias}</strong> asistencias | 🎯 <strong>${pasesComp}</strong> pases completados (${precPase}%) | 🔑 <strong>${pasesClave}</strong> pases clave`;
-      } else { // Delanteros y Extremos
+      } else {
         metricasEspecificas = `⚽ <strong>${goles}</strong> goles | 🅰️ <strong>${asistencias}</strong> asistencias | ⚡ <strong>${regates}</strong> regates completados | 🔑 <strong>${pasesClave}</strong> pases clave`;
       }
 
@@ -770,7 +873,7 @@
           <div class="cartel-stats">
             📊 <strong>Partidos oficiales:</strong> ${partidos}<br>
             📈 <strong>Estadísticas clave:</strong><br>${metricasEspecificas}<br>
-            ⭐ <strong>Evolución:</strong> ${subida >= 0 ? '+' : ''}${subida} de media (Media actual: <strong>${player.media}</strong>)
+            ⭐ <strong>Evolución deportiva:</strong> ${subida >= 0 ? '+' : ''}${subida} de media (Media deportiva: <strong>${player.media}</strong>)
           </div>
         </div>
       `;
@@ -980,6 +1083,7 @@
         </div>
 
         ${htmlRendimiento}
+        ${htmlSaludMental}
         ${htmlMomento}
 
         <hr>
@@ -1003,6 +1107,73 @@
     function renderDespacho() {
       let htmlOpciones = "";
 
+      // Pool de Guerras de Clubes
+      const guerrasClubes = [
+        {
+          titulo: "🇮🇹 ¡GUERRA EN LA SERIE A ITALIANA!",
+          clubA: "AC Milan",
+          clubB: "Juventus",
+          descA: "La mística de San Siro",
+          descB: "Luchar por todos los títulos"
+        },
+        {
+          titulo: "🏴󠁧󠁢󠁥󠁮󠁧󠁿 ¡DUELO POR EL CONTROL DE LA PREMIER LEAGUE!",
+          clubA: "Manchester City",
+          clubB: "Arsenal FC",
+          descA: "Fútbol total y plantilla galáctica",
+          descB: "Liderar a los Gunners a la gloria"
+        },
+        {
+          titulo: "🇪🇸 ¡TERREMOTO EN ESPAÑA: EL CLÁSICO A TUS PIES!",
+          clubA: "Real Madrid",
+          clubB: "FC Barcelona",
+          descA: "El rey de Europa y asalto al Balón de Oro",
+          descB: "El estilo legendario y liderar el proyecto"
+        },
+        {
+          titulo: "⚔️ ¡PULSO DE COLOSOS EUROPEOS!",
+          clubA: "Paris Saint-Germain",
+          clubB: "Bayern Múnich",
+          descA: "Proyecto estelar y reinado en París",
+          descB: "La implacable máquina competitiva bávara"
+        },
+        {
+          titulo: "🏴󠁧󠁢󠁥󠁮󠁧󠁿 ¡BATALLA HISTÓRICA EN EL FÚTBOL INGLÉS!",
+          clubA: "Liverpool FC",
+          clubB: "Manchester United",
+          descA: "Vibrar con la pasión de Anfield Road",
+          descB: "Resucitar la grandeza del Teatro de los Sueños"
+        },
+        {
+          titulo: "🇩🇪 ¡DER KLASSIKER POR TU FICHAJE!",
+          clubA: "Borussia Dortmund",
+          clubB: "Bayern Múnich",
+          descA: "El Muro Amarillo y pasión desenfrenada",
+          descB: "Hegemonía y títulos garantizados"
+        },
+        {
+          titulo: "🇪🇸 ¡EL DERBI MADRILEÑO AL ROJO VIVO!",
+          clubA: "Real Madrid",
+          clubB: "Atlético de Madrid",
+          descA: "El prestigio blanco en el Bernabéu",
+          descB: "Coraje, corazón y la batalla rojiblanca"
+        }
+      ];
+
+      function generarHtmlGuerra(guerra) {
+        return `
+          <div style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%); border-left: 5px solid #ef4444; padding: 14px; margin: 15px 0;">
+            <strong>${guerra.titulo}</strong><br>
+            Tanto el <strong>${guerra.clubA}</strong> como el <strong>${guerra.clubB}</strong> quieren convertirte en su gran referente.
+          </div>
+          <div class="lista-opciones">
+            <button class="btn-opcion" onclick="ejecutarDecision({club: '${guerra.clubA}'})">Fichar por el <strong>${guerra.clubA}</strong> (${guerra.descA})</button>
+            <button class="btn-opcion" onclick="ejecutarDecision({club: '${guerra.clubB}'})">Fichar por el <strong>${guerra.clubB}</strong> (${guerra.descB})</button>
+            <button class="btn-opcion" onclick="ejecutarDecision({mediaDelta: 1})">Rechazar a ambos y ser la leyenda del <strong>${player.club}</strong> (+1 de media)</button>
+          </div>
+        `;
+      }
+
       if (player.numeroFicha === 1) {
         const offA = pickRandom(clubesEuropaMedios);
         const offB = pickRandom(clubesEuropaBajos);
@@ -1018,21 +1189,12 @@
       } else if (player.numeroFicha <= 5) {
         const azarDilema = randomInt(1, 4);
         if (azarDilema === 1) {
-          htmlOpciones = `
-            <div style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%); border-left: 5px solid #ef4444; padding: 14px; margin: 15px 0;">
-              🇮🇹 <strong>¡GUERRA EN LA SERIE A ITALIANA!</strong><br>
-              Tanto el <strong>AC Milan</strong> como la <strong>Juventus</strong> quieren convertirte en su gran referente.
-            </div>
-            <div class="lista-opciones">
-              <button class="btn-opcion" onclick="ejecutarDecision({club: 'AC Milan'})">Fichar por el <strong>AC Milan</strong> (La mística de San Siro)</button>
-              <button class="btn-opcion" onclick="ejecutarDecision({club: 'Juventus'})">Fichar por la <strong>Juventus</strong> (Luchar por todos los títulos)</button>
-              <button class="btn-opcion" onclick="ejecutarDecision({mediaDelta: 1})">Rechazar a Italia y quedarte en el <strong>${player.club}</strong> (+1 de media)</button>
-            </div>
-          `;
+          const guerra = pickRandom(guerrasClubes);
+          htmlOpciones = generarHtmlGuerra(guerra);
         } else if (azarDilema === 2) {
           htmlOpciones = `
             <div style="background: rgba(14, 165, 233, 0.15); border-left: 4px solid #0ea5e9; padding: 14px; margin: 15px 0;">
-              🏃‍♂️️ <strong>EXIGENCIA TÁCTICA: PRESIÓN ASFIXIANTE Y REPLIEGUE JOVEN</strong><br>
+              🏃‍♂ <strong>EXIGENCIA TÁCTICA: PRESIÓN ASFIXIANTE Y REPLIEGUE JOVEN</strong><br>
               El míster te exige presionar la salida y vaciarte en defensa en cada jugada. Eres joven y tus pulmones aguantan todo.<br>
               <small style="color: #94a3b8;">(Juventud: 75% éxito +1 o +2 de media / 25% sobrecarga muscular y -1)</small>
             </div>
@@ -1068,29 +1230,11 @@
       } else if (player.numeroFicha <= 7) {
         const azarPrime = randomInt(1, 4);
         if (azarPrime === 1 && player.media >= 83) {
-          htmlOpciones = `
-            <div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.25) 0%, rgba(15, 23, 42, 0.9) 100%); border-left: 5px solid #facc15; padding: 14px; margin: 15px 0;">
-              🔥 <strong>¡TERREMOTO EN ESPAÑA: EL CLÁSICO A TUS PIES!</strong><br>
-              El <strong>Real Madrid</strong> y el <strong>FC Barcelona</strong> depositan tu cláusula de rescisión a la vez.
-            </div>
-            <div class="lista-opciones">
-              <button class="btn-opcion" onclick="ejecutarDecision({club: 'Real Madrid'})">Fichar por el <strong>Real Madrid</strong> (El rey de Europa y asalto al Balón de Oro)</button>
-              <button class="btn-opcion" onclick="ejecutarDecision({club: 'FC Barcelona'})">Fichar por el <strong>FC Barcelona</strong> (El estilo legendario y liderar el proyecto)</button>
-              <button class="btn-opcion" onclick="ejecutarDecision({mediaDelta: 1})">Rechazar a ambos y ser la leyenda del <strong>${player.club}</strong> (+1 de media)</button>
-            </div>
-          `;
+          const guerra = pickRandom(guerrasClubes);
+          htmlOpciones = generarHtmlGuerra(guerra);
         } else if (azarPrime === 2) {
-          htmlOpciones = `
-            <div style="background: rgba(14, 165, 233, 0.15); border-left: 4px solid #0ea5e9; padding: 14px; margin: 15px 0;">
-              🏴󠁧󠁢󠁥󠁮󠁧󠁿 <strong>BATALLA EN INGLATERRA</strong><br>
-              Propuestas astronómicas del <strong>Manchester City</strong> y del <strong>Arsenal FC</strong>.
-            </div>
-            <div class="lista-opciones">
-              <button class="btn-opcion" onclick="ejecutarDecision({club: 'Manchester City'})">Fichar por el <strong>Manchester City</strong> (Fútbol total y plantilla galáctica)</button>
-              <button class="btn-opcion" onclick="ejecutarDecision({club: 'Arsenal FC'})">Fichar por el <strong>Arsenal FC</strong> (Liderar a los Gunners a la gloria)</button>
-              <button class="btn-opcion" onclick="ejecutarDecision({})">Seguir defendiendo el escudo del <strong>${player.club}</strong></button>
-            </div>
-          `;
+          const guerra = pickRandom(guerrasClubes.filter(g => g.clubA !== "AC Milan"));
+          htmlOpciones = generarHtmlGuerra(guerra);
         } else if (azarPrime === 3) {
           htmlOpciones = `
             <div style="background: rgba(245, 158, 11, 0.15); border-left: 4px solid #f59e0b; padding: 14px; margin: 15px 0;">
@@ -1244,7 +1388,7 @@
           <p>• <strong>Posición:</strong> ${player.posicion} | <strong>Pierna:</strong> ${player.pieHabil}</p>
           <p>• <strong>Media final de retirada:</strong> ${player.media} / 99</p>
           <p>• <strong>Partidos oficiales en clubes:</strong> ${player.partidosTotales}</p>
-          <p>• <strong>Producción ofensiva de club:</strong> ⚽ ${player.golesTotales} goles | 🅰️ ${player.asistenciasTotales} asistencias</p>
+          <p>• <strong>Producción ofensiva de club:</strong> ⚽ ${player.golesTotales} goles | 🅰️️ ${player.asistenciasTotales} asistencias</p>
           ${esPortero ? `<p>• <strong>Muro bajo palos:</strong> 🧤 ${player.porteriasCeroTotales} porterías a cero | 🧱 ${player.paradasTotales} paradas totales</p>` : ''}
           ${esDefensa ? `<p>• <strong>Rendimiento defensivo:</strong> 🛡️ ${player.recuperacionesTotales} recuperaciones/entradas \vert{} 🧤 ${player.porteriasCeroTotales} porterías a cero</p>` : ''}
           ${(!esPortero && !esDefensa) ? `<p>• <strong>Creación y desborde:</strong> 🔑 ${player.pasesClaveTotales} pases clave | ⚡ ${player.regatesTotales} regates \vert{} 🎯 ${player.pasesCompletadosTotales} pases completados</p>` : ''}
